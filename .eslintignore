@@ -1,0 +1,18 @@
+# folders
+artifacts/
+build/
+cache/
+coverage/
+dist/
+lib/
+node_modules/
+typechain/
+
+# files
+.solcover.js
+coverage.json
+package.json
+docify.js
+
+# Temporary ignore this due some error with prettier-plugin-solidity
+contracts/authorization/Authorization.sol

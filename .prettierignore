@@ -1,0 +1,17 @@
+# folders
+artifacts/
+build/
+cache/
+coverage/
+dist/
+lib/
+node_modules/
+typechain/
+contracts/mocks/
+contracts/test/
+
+# files
+coverage.json
+package.json
+
+contracts/authorization/Authorization.sol
