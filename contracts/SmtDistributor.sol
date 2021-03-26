@@ -11,18 +11,18 @@ import "hardhat/console.sol";
 contract SmtDistributor is Ownable {
     using SafeMath for uint256;
 
-    struct Share {
+    struct Reward {
         address beneficiary;
         uint256 amount;
     }
 
-    /// @dev Emitted when `beneficiary` claims its `share`.
-    event Claim(address indexed beneficiary, uint256 share);
+    /// @dev Emitted when `beneficiary` claims its `reward`.
+    event Claim(address indexed beneficiary, uint256 reward);
 
     /// @dev ERC20 basic token contract being held
     IERC20 public token;
 
-    /// @dev Beneficiaries of tokens which can claim
+    /// @dev Beneficiaries of reward tokens
     mapping(address => uint256) public beneficiaries;
 
     /**
@@ -37,29 +37,29 @@ contract SmtDistributor is Ownable {
     }
 
     /**
-     * @dev Deposits a new `totalAmount` to be claimed by beneficiaries distrubuted in `shares`.
+     * @dev Deposits a new `totalAmount` to be claimed by beneficiaries distrubuted in `rewards`.
      *
      * Requirements:
      *
      * - the caller must be the owner.
-     * - `shares` the accumulated shares' amount should be equal to `totalAmount`.
+     * - the accumulated rewards' amount should be equal to `totalAmount`.
      *
-     * @param shares Array indicating each benaficiary share from the total to be deposited.
+     * @param rewards Array indicating each benaficiary reward from the total to be deposited.
      * @param totalAmount Total amount to be deposited.
      */
-    function depositShares(Share[] memory shares, uint256 totalAmount) public onlyOwner returns (bool) {
+    function depositRewards(Reward[] memory rewards, uint256 totalAmount) public onlyOwner returns (bool) {
         require(totalAmount > 0, "totalAmount is zero");
-        require(shares.length > 0, "shares can not be empty");
+        require(rewards.length > 0, "rewards can not be empty");
         require(token.transferFrom(_msgSender(), address(this), totalAmount), "Transfer failed");
 
-        uint256 accByShares = 0;
-        for (uint256 i = 0; i < shares.length; i++) {
-            Share memory currentShare = shares[i];
-            accByShares += currentShare.amount;
-            beneficiaries[currentShare.beneficiary] += currentShare.amount;
+        uint256 accByRewards = 0;
+        for (uint256 i = 0; i < rewards.length; i++) {
+            Reward memory reward = rewards[i];
+            accByRewards += reward.amount;
+            beneficiaries[reward.beneficiary] += reward.amount;
         }
 
-        require(accByShares == totalAmount, "total amount mismatch");
+        require(accByRewards == totalAmount, "total amount mismatch");
 
         return true;
     }

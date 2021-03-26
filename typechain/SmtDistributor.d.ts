@@ -23,7 +23,7 @@ interface SmtDistributorInterface extends ethers.utils.Interface {
   functions: {
     "beneficiaries(address)": FunctionFragment;
     "claim()": FunctionFragment;
-    "depositShares(tuple[],uint256)": FunctionFragment;
+    "depositRewards(tuple[],uint256)": FunctionFragment;
     "owner()": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
     "token()": FunctionFragment;
@@ -36,7 +36,7 @@ interface SmtDistributorInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "claim", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "depositShares",
+    functionFragment: "depositRewards",
     values: [{ beneficiary: string; amount: BigNumberish }[], BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
@@ -56,7 +56,7 @@ interface SmtDistributorInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "claim", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "depositShares",
+    functionFragment: "depositRewards",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
@@ -141,14 +141,14 @@ export class SmtDistributor extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    depositShares(
-      shares: { beneficiary: string; amount: BigNumberish }[],
+    depositRewards(
+      rewards: { beneficiary: string; amount: BigNumberish }[],
       totalAmount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    "depositShares(tuple[],uint256)"(
-      shares: { beneficiary: string; amount: BigNumberish }[],
+    "depositRewards(tuple[],uint256)"(
+      rewards: { beneficiary: string; amount: BigNumberish }[],
       totalAmount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
@@ -195,14 +195,14 @@ export class SmtDistributor extends Contract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  depositShares(
-    shares: { beneficiary: string; amount: BigNumberish }[],
+  depositRewards(
+    rewards: { beneficiary: string; amount: BigNumberish }[],
     totalAmount: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  "depositShares(tuple[],uint256)"(
-    shares: { beneficiary: string; amount: BigNumberish }[],
+  "depositRewards(tuple[],uint256)"(
+    rewards: { beneficiary: string; amount: BigNumberish }[],
     totalAmount: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
@@ -245,14 +245,14 @@ export class SmtDistributor extends Contract {
 
     "claim()"(overrides?: CallOverrides): Promise<boolean>;
 
-    depositShares(
-      shares: { beneficiary: string; amount: BigNumberish }[],
+    depositRewards(
+      rewards: { beneficiary: string; amount: BigNumberish }[],
       totalAmount: BigNumberish,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    "depositShares(tuple[],uint256)"(
-      shares: { beneficiary: string; amount: BigNumberish }[],
+    "depositRewards(tuple[],uint256)"(
+      rewards: { beneficiary: string; amount: BigNumberish }[],
       totalAmount: BigNumberish,
       overrides?: CallOverrides
     ): Promise<boolean>;
@@ -283,10 +283,10 @@ export class SmtDistributor extends Contract {
   filters: {
     Claim(
       beneficiary: string | null,
-      share: null
+      reward: null
     ): TypedEventFilter<
       [string, BigNumber],
-      { beneficiary: string; share: BigNumber }
+      { beneficiary: string; reward: BigNumber }
     >;
 
     OwnershipTransferred(
@@ -314,14 +314,14 @@ export class SmtDistributor extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    depositShares(
-      shares: { beneficiary: string; amount: BigNumberish }[],
+    depositRewards(
+      rewards: { beneficiary: string; amount: BigNumberish }[],
       totalAmount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    "depositShares(tuple[],uint256)"(
-      shares: { beneficiary: string; amount: BigNumberish }[],
+    "depositRewards(tuple[],uint256)"(
+      rewards: { beneficiary: string; amount: BigNumberish }[],
       totalAmount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
@@ -372,14 +372,14 @@ export class SmtDistributor extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    depositShares(
-      shares: { beneficiary: string; amount: BigNumberish }[],
+    depositRewards(
+      rewards: { beneficiary: string; amount: BigNumberish }[],
       totalAmount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    "depositShares(tuple[],uint256)"(
-      shares: { beneficiary: string; amount: BigNumberish }[],
+    "depositRewards(tuple[],uint256)"(
+      rewards: { beneficiary: string; amount: BigNumberish }[],
       totalAmount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;

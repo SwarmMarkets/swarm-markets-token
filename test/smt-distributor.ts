@@ -61,29 +61,29 @@ describe('STM', function () {
     await reverter.snapshot();
   });
 
-  describe('#depositShares', () => {
-    it('non owner should not be able to call depositShares', async () => {
+  describe('#depositRewards', () => {
+    it('non owner should not be able to call depositRewards', async () => {
       await expect(
-        smtDisctributorContractKakaroto.depositShares([{ beneficiary: kakarotoAddress, amount: 100 }], 100),
+        smtDisctributorContractKakaroto.depositRewards([{ beneficiary: kakarotoAddress, amount: 100 }], 100),
       ).to.be.revertedWith('Ownable: caller is not the owner');
     });
 
-    it('owner should not be able to call depositShares with totalAmount 0', async () => {
+    it('owner should not be able to call depositRewards with totalAmount 0', async () => {
       await expect(
-        smtDisctributorContract.depositShares([{ beneficiary: kakarotoAddress, amount: 100 }], 0),
+        smtDisctributorContract.depositRewards([{ beneficiary: kakarotoAddress, amount: 100 }], 0),
       ).to.be.revertedWith('totalAmount is zero');
     });
 
-    it('owner should not be able to call depositShares with empty shares', async () => {
-      await expect(smtDisctributorContract.depositShares([], 100)).to.be.revertedWith('shares can not be empty');
+    it('owner should not be able to call depositRewards with empty rewards', async () => {
+      await expect(smtDisctributorContract.depositRewards([], 100)).to.be.revertedWith('rewards can not be empty');
     });
 
-    it('owner should not be able to call depositShares with accumulated shares amont and totalAmount mismatch', async () => {
+    it('owner should not be able to call depositRewards with accumulated rewards amont and totalAmount mismatch', async () => {
       await SMTContract.approve(smtDisctributorContract.address, ethers.constants.MaxUint256);
 
       const initialBlance = await SMTContract.balanceOf(deployerAddress);
       await expect(
-        smtDisctributorContract.depositShares(
+        smtDisctributorContract.depositRewards(
           [
             { beneficiary: kakarotoAddress, amount: 100 },
             { beneficiary: vegetaAddress, amount: 100 },
@@ -95,11 +95,11 @@ describe('STM', function () {
       expect(await SMTContract.balanceOf(deployerAddress)).to.eq(initialBlance);
     });
 
-    it('owner should be able to call depositShares with right parameters', async () => {
+    it('owner should be able to call depositRewards with right parameters', async () => {
       const deployerInitialBlance = await SMTContract.balanceOf(deployerAddress);
       const distributorInitialBlance = await SMTContract.balanceOf(smtDisctributorContractKarpincho.address);
 
-      await smtDisctributorContract.depositShares(
+      await smtDisctributorContract.depositRewards(
         [
           { beneficiary: kakarotoAddress, amount: 100 },
           { beneficiary: vegetaAddress, amount: 100 },
@@ -115,11 +115,11 @@ describe('STM', function () {
       expect(await smtDisctributorContract.beneficiaries(vegetaAddress)).to.eq(100);
     });
 
-    it('beneficiary share should be accumulated with subsequent deposits', async () => {
+    it('beneficiary reward should be accumulated with subsequent deposits', async () => {
       const deployerInitialBlance = await SMTContract.balanceOf(deployerAddress);
       const distributorInitialBlance = await SMTContract.balanceOf(smtDisctributorContractKarpincho.address);
 
-      await smtDisctributorContract.depositShares([{ beneficiary: kakarotoAddress, amount: 100 }], 100);
+      await smtDisctributorContract.depositRewards([{ beneficiary: kakarotoAddress, amount: 100 }], 100);
 
       expect(await SMTContract.balanceOf(deployerAddress)).to.eq(deployerInitialBlance.sub(100));
       expect(await SMTContract.balanceOf(smtDisctributorContractKarpincho.address)).to.eq(
@@ -141,7 +141,7 @@ describe('STM', function () {
       expect(await SMTContract.balanceOf(karpinchoAddress)).to.eq(karpinchoInitialBlance);
     });
 
-    it('a beneficiary should be able to claim its current share', async () => {
+    it('a beneficiary should be able to claim its current reward', async () => {
       const distributorInitialBlance = await SMTContract.balanceOf(smtDisctributorContractKarpincho.address);
       const kakarotoInitialBlance = await SMTContract.balanceOf(kakarotoAddress);
       const kakarotoInitialClaimable = await smtDisctributorContract.beneficiaries(kakarotoAddress);
