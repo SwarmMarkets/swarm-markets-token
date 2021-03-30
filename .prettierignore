@@ -13,5 +13,3 @@ contracts/test/
 # files
 coverage.json
 package.json
-
-contracts/authorization/Authorization.sol

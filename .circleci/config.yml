@@ -1,0 +1,54 @@
+version: 2.1
+orbs:
+  node: circleci/node@3.0.0
+jobs:
+  checkout_and_install:
+    executor:
+      name: node/default
+    working_directory: ~/swarm-markets
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - dependency-cache-{{ checksum "package.json" }}
+      - run:
+          name: Install Dependencies
+          command: yarn install --quiet
+      - save_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
+          paths:
+            - node_modules
+      - save_cache:
+          key: swarm-markets-{{ .Environment.CIRCLE_SHA1 }}
+          paths:
+            - ~/swarm-markets
+  lint:
+    executor:
+      name: node/default
+    working_directory: ~/swarm-markets
+    steps:
+      - restore_cache:
+          key: swarm-markets-{{ .Environment.CIRCLE_SHA1 }}
+      - run:
+          name: Run Linter
+          command: yarn lint
+  test:
+    executor:
+      name: node/default
+    working_directory: ~/swarm-markets
+    steps:
+      - restore_cache:
+          key: swarm-markets-{{ .Environment.CIRCLE_SHA1 }}
+      - run:
+          name: Runt tests
+          command: yarn test
+workflows:
+  lint_and_test:
+    jobs:
+      - checkout_and_install
+      - lint:
+          requires:
+            - checkout_and_install
+      - test:
+          requires:
+            - checkout_and_install
