@@ -24,12 +24,9 @@ contract SmtVesting is Ownable {
     uint256 private constant INITAL_ANUAL_DIST = 62500000 * 10**18;
     uint256 private constant WEEK_BATCH_DIV = 45890222137623526749; //(0.995^0 + 0.995^1 ... + 0.995^51) = 45,894396603
 
-    uint256 public totalClaimed;
-
-    uint256 public lastYCBClaimed;
+    // YCB = year comunity batch
+    bool public firstYCBClaimed;
     uint256 public lastClaimedBlock;
-
-
 
     /**
      * @dev Sets the value for {initialBloc}.
@@ -39,6 +36,7 @@ contract SmtVesting is Ownable {
      */
     constructor() {
         initialBlock = block.number;
+        lastClaimedBlock = block.number;
     }
 
     /**
@@ -53,6 +51,144 @@ contract SmtVesting is Ownable {
     function setToken(address _token) external onlyOwner {
         require(_token != address(0), "token is the zero address");
         token = IERC20(_token);
+    }
+
+    function claim() external onlyOwner {
+        uint256 amount = claimableAmount();
+        lastClaimedBlock = block.number;
+        firstYCBClaimed = true;
+        token.transfer(_msgSender(), amount);
+    }
+
+    function claimableAmount() public view returns (uint256) {
+        return
+            _claimableAmount(
+                firstYCBClaimed,
+                block.number,
+                blockYear(block.number),
+                blockWeek(block.number),
+                lastClaimedBlock
+            );
+    }
+
+    function _claimableAmount(
+        bool isFirstYCBClaimed,
+        uint256 blockNumber,
+        uint256 cYear,
+        uint256 cWeek,
+        uint256 lastClaimedBlock
+    ) internal view returns (uint256) {
+        uint256 total = 0;
+        uint256 lastClaimedBlockYear = blockYear(lastClaimedBlock);
+
+        total += accumulateAnualComBatch(isFirstYCBClaimed, lastClaimedBlock, cYear);
+
+        if (lastClaimedBlockYear < cYear) {
+            total += accumulateFromPastYears(blockNumber, cYear, cWeek, lastClaimedBlock);
+        } else {
+            total += accumulateCurrentYear(blockNumber, cYear, cWeek, lastClaimedBlock);
+        }
+
+        return total;
+    }
+
+    function accumulateAnualComBatch(
+        bool isFirstYCBClaimed,
+        uint256 lastClaimedBlock,
+        uint256 cYear
+    ) public view returns (uint256) {
+        uint256 acc = 0;
+        uint256 lastClaimedBlockYear = blockYear(lastClaimedBlock);
+        if (!isFirstYCBClaimed || lastClaimedBlockYear < cYear) {
+            uint256 from = isFirstYCBClaimed ? lastClaimedBlockYear + 1 : 0;
+            for (uint256 y = from; y <= cYear; y++) {
+                acc += yearAnualCommunityBatch(y);
+            }
+        }
+
+        return acc;
+    }
+
+    function accumulateFromPastYears(
+        uint256 blockNumber,
+        uint256 cYear,
+        uint256 cWeek,
+        uint256 lastClaimedBlock
+    ) public view returns (uint256) {
+        uint256 acc = 0;
+        uint256 lastClaimedBlockYear = blockYear(lastClaimedBlock);
+        uint256 lastClaimedBlockWeek = blockWeek(lastClaimedBlock);
+
+        {
+            // add what remains to claim from the claimed week
+            uint256 lastClaimedYW = yearWeekRelaseBatch(lastClaimedBlockYear, lastClaimedBlockWeek);
+            uint256 lastWBlock = yearWeekLastBlock(lastClaimedBlockYear, lastClaimedBlockWeek);
+            acc += lastClaimedYW.mul(lastWBlock.sub(lastClaimedBlockWeek)).div(WEEK);
+        }
+
+        {
+            uint256 ww;
+            uint256 yy;
+            // add remaining weeks of last claimed year
+            for (ww = lastClaimedBlockWeek + 1; ww < 52; ww++) {
+                acc += yearWeekRelaseBatch(lastClaimedBlockYear, ww);
+            }
+
+            // add complete weeks years until current year
+            for (yy = lastClaimedBlockYear + 1; yy < cYear; yy++) {
+                for (ww = 0; ww < 52; ww++) {
+                    acc += yearWeekRelaseBatch(yy, ww);
+                }
+            }
+
+            // current year until current week
+            for (ww = 0; ww < cWeek; ww++) {
+                acc += yearWeekRelaseBatch(cYear, ww);
+            }
+        }
+
+        {
+            // portion of current week
+            uint256 currentYW = yearWeekRelaseBatch(cYear, cWeek);
+            uint256 firstCWBlock = yearWeekFirstBlock(cYear, cWeek);
+            acc += currentYW.mul(blockNumber.sub(firstCWBlock)).div(WEEK);
+        }
+
+        return acc;
+    }
+
+    function accumulateCurrentYear(
+        uint256 blockNumber,
+        uint256 cYear,
+        uint256 cWeek,
+        uint256 lastClaimedBlock
+    ) public view returns (uint256) {
+        uint256 acc = 0;
+        uint256 lastClaimedBlockWeek = blockWeek(lastClaimedBlock);
+
+        if (lastClaimedBlockWeek < cWeek) {
+            // add what remains to claim from the claimed week
+            uint256 lastClaimedYW = yearWeekRelaseBatch(cYear, lastClaimedBlockWeek);
+            uint256 lastWBlock = yearWeekLastBlock(cYear, lastClaimedBlockWeek);
+            acc += lastClaimedYW.mul(lastWBlock.sub(lastClaimedBlock)).div(WEEK);
+
+            {
+                uint256 ww;
+                // add remaining weeks until current
+                for (ww = lastClaimedBlockWeek + 1; ww < cWeek; ww++) {
+                    acc += yearWeekRelaseBatch(cYear, ww);
+                }
+            }
+        }
+
+        {
+            // portion of current week
+            uint256 currentYW = yearWeekRelaseBatch(cYear, cWeek);
+            uint256 firstCWBlock = yearWeekFirstBlock(cYear, cWeek);
+            acc += currentYW.mul(blockNumber.sub(firstCWBlock)).div(WEEK);
+        }
+
+        return acc;
     }
 
     // Utils
@@ -80,21 +216,21 @@ contract SmtVesting is Ownable {
 
     // 0 based
     function weeklyRedPerc(uint256 week) public view returns (uint256) {
-      uint256 reductionPerc = 10**18;
-      uint256 nineNineFive = 10**18 - 5000000000000000;
-      for (uint256 i = 0; i < week; i++) {
-        reductionPerc = nineNineFive.mul(reductionPerc).div(10**18);
-      }
+        uint256 reductionPerc = 10**18;
+        uint256 nineNineFive = 10**18 - 5000000000000000;
+        for (uint256 i = 0; i < week; i++) {
+            reductionPerc = nineNineFive.mul(reductionPerc).div(10**18);
+        }
 
-      return reductionPerc;
+        return reductionPerc;
     }
 
     // W1 amount for year
     // totalWeeklyAnualBatch / (0.995^0 + 0.995^1 ... + 0.995^51)
     function yearFrontWeightedWRB(uint256 year) public view returns (uint256) {
-      uint256 totalWeeklyAnualBatch = yearAnualWeeklyBatch(year);
+        uint256 totalWeeklyAnualBatch = yearAnualWeeklyBatch(year);
 
-      return totalWeeklyAnualBatch.mul(10**18).div(WEEK_BATCH_DIV);
+        return totalWeeklyAnualBatch.mul(10**18).div(WEEK_BATCH_DIV);
     }
 
     function yearWeekRelaseBatch(uint256 year, uint256 week) public view returns (uint256) {
@@ -102,12 +238,6 @@ contract SmtVesting is Ownable {
         uint256 weeklyRedPercentage = weeklyRedPerc(week);
 
         return yearW1.mul(weeklyRedPercentage).div(10**18);
-    }
-
-
-    // current year (zero based) = (current block - block 1) / block per year
-    function currentYear() public view returns (uint256) {
-        return blockYear(block.number);
     }
 
     // year N first-block = block 1 + block per year * N
@@ -121,19 +251,16 @@ contract SmtVesting is Ownable {
     }
 
     function yearWeekLastBlock(uint256 year, uint256 week) public view returns (uint256) {
-        return yearWeekFirstBlock(year, week + 1).sub(1);
+        return yearWeekFirstBlock(year, week + 1);
     }
 
-    // current week (zero based) = (current block - year N first-block) / block per week
-    function currentYearWeek() public view returns (uint256) {
-        return (block.number.sub(yearFirstBlock(currentYear()))).div(WEEK);
-    }
-
+    // year (zero based) = (block - block 1) / block per year
     function blockYear(uint256 blockNumber) public view returns (uint256) {
-      return (blockNumber.sub(initialBlock)).div(YEAR);
+        return (blockNumber.sub(initialBlock)).div(YEAR);
     }
 
+    // week (zero based) = (block - year N first-block) / block per week
     function blockWeek(uint256 blockNumber) public view returns (uint256) {
-      return (blockNumber.sub(yearFirstBlock(blockYear(blockNumber)))).div(WEEK);
+        return (blockNumber.sub(yearFirstBlock(blockYear(blockNumber)))).div(WEEK);
     }
 }

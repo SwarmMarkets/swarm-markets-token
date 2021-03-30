@@ -19,7 +19,7 @@ import { Listener, Provider } from "@ethersproject/providers";
 import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
 import { TypedEventFilter, TypedEvent, TypedListener } from "./commons";
 
-interface SmtVestingInterface extends ethers.utils.Interface {
+interface SmtVestingWithSettersInterface extends ethers.utils.Interface {
   functions: {
     "accumulateAnualComBatch(bool,uint256,uint256)": FunctionFragment;
     "accumulateCurrentYear(uint256,uint256,uint256,uint256)": FunctionFragment;
@@ -33,6 +33,8 @@ interface SmtVestingInterface extends ethers.utils.Interface {
     "lastClaimedBlock()": FunctionFragment;
     "owner()": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
+    "setFirstYCBClaimed(bool)": FunctionFragment;
+    "setLastClaimedBlock(uint256)": FunctionFragment;
     "setToken(address)": FunctionFragment;
     "token()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
@@ -88,6 +90,14 @@ interface SmtVestingInterface extends ethers.utils.Interface {
   encodeFunctionData(
     functionFragment: "renounceOwnership",
     values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setFirstYCBClaimed",
+    values: [boolean]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setLastClaimedBlock",
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "setToken", values: [string]): string;
   encodeFunctionData(functionFragment: "token", values?: undefined): string;
@@ -168,6 +178,14 @@ interface SmtVestingInterface extends ethers.utils.Interface {
     functionFragment: "renounceOwnership",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "setFirstYCBClaimed",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setLastClaimedBlock",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "setToken", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "token", data: BytesLike): Result;
   decodeFunctionResult(
@@ -218,7 +236,7 @@ interface SmtVestingInterface extends ethers.utils.Interface {
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
 }
 
-export class SmtVesting extends Contract {
+export class SmtVestingWithSetters extends Contract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
@@ -259,7 +277,7 @@ export class SmtVesting extends Contract {
     toBlock?: string | number | undefined
   ): Promise<Array<TypedEvent<EventArgsArray & EventArgsObject>>>;
 
-  interface: SmtVestingInterface;
+  interface: SmtVestingWithSettersInterface;
 
   functions: {
     accumulateAnualComBatch(
@@ -361,6 +379,26 @@ export class SmtVesting extends Contract {
     ): Promise<ContractTransaction>;
 
     "renounceOwnership()"(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    setFirstYCBClaimed(
+      _firstYCBClaimed: boolean,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    "setFirstYCBClaimed(bool)"(
+      _firstYCBClaimed: boolean,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    setLastClaimedBlock(
+      _lastClaimedBlock: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    "setLastClaimedBlock(uint256)"(
+      _lastClaimedBlock: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -587,6 +625,26 @@ export class SmtVesting extends Contract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  setFirstYCBClaimed(
+    _firstYCBClaimed: boolean,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  "setFirstYCBClaimed(bool)"(
+    _firstYCBClaimed: boolean,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  setLastClaimedBlock(
+    _lastClaimedBlock: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  "setLastClaimedBlock(uint256)"(
+    _lastClaimedBlock: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   setToken(
     _token: string,
     overrides?: Overrides & { from?: string | Promise<string> }
@@ -801,6 +859,26 @@ export class SmtVesting extends Contract {
     renounceOwnership(overrides?: CallOverrides): Promise<void>;
 
     "renounceOwnership()"(overrides?: CallOverrides): Promise<void>;
+
+    setFirstYCBClaimed(
+      _firstYCBClaimed: boolean,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "setFirstYCBClaimed(bool)"(
+      _firstYCBClaimed: boolean,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setLastClaimedBlock(
+      _lastClaimedBlock: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "setLastClaimedBlock(uint256)"(
+      _lastClaimedBlock: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     setToken(_token: string, overrides?: CallOverrides): Promise<void>;
 
@@ -1033,6 +1111,26 @@ export class SmtVesting extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    setFirstYCBClaimed(
+      _firstYCBClaimed: boolean,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    "setFirstYCBClaimed(bool)"(
+      _firstYCBClaimed: boolean,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    setLastClaimedBlock(
+      _lastClaimedBlock: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    "setLastClaimedBlock(uint256)"(
+      _lastClaimedBlock: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     setToken(
       _token: string,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -1260,6 +1358,26 @@ export class SmtVesting extends Contract {
     ): Promise<PopulatedTransaction>;
 
     "renounceOwnership()"(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setFirstYCBClaimed(
+      _firstYCBClaimed: boolean,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "setFirstYCBClaimed(bool)"(
+      _firstYCBClaimed: boolean,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setLastClaimedBlock(
+      _lastClaimedBlock: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "setLastClaimedBlock(uint256)"(
+      _lastClaimedBlock: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
