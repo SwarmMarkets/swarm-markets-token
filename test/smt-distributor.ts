@@ -25,7 +25,7 @@ let SmtDistributorFactory: ContractFactory;
 
 const tokenSupply = ethers.constants.One.mul(250000000);
 
-describe('STM', function () {
+describe('SmtDistributor contract', function () {
   const reverter = new Reverter();
 
   before(async () => {

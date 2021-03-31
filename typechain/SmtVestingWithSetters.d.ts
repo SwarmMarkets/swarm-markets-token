@@ -22,19 +22,17 @@ import { TypedEventFilter, TypedEvent, TypedListener } from "./commons";
 interface SmtVestingWithSettersInterface extends ethers.utils.Interface {
   functions: {
     "accumulateAnualComBatch(bool,uint256,uint256)": FunctionFragment;
-    "accumulateCurrentYear(uint256,uint256,uint256,uint256)": FunctionFragment;
-    "accumulateFromPastYears(uint256,uint256,uint256,uint256)": FunctionFragment;
+    "accumulateCurrentYear(uint256,uint256)": FunctionFragment;
+    "accumulateFromPastYears(uint256,uint256)": FunctionFragment;
     "blockWeek(uint256)": FunctionFragment;
     "blockYear(uint256)": FunctionFragment;
-    "claim()": FunctionFragment;
+    "claim(uint256)": FunctionFragment;
     "claimableAmount()": FunctionFragment;
     "firstYCBClaimed()": FunctionFragment;
     "initialBlock()": FunctionFragment;
     "lastClaimedBlock()": FunctionFragment;
     "owner()": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
-    "setFirstYCBClaimed(bool)": FunctionFragment;
-    "setLastClaimedBlock(uint256)": FunctionFragment;
     "setToken(address)": FunctionFragment;
     "token()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
@@ -55,11 +53,11 @@ interface SmtVestingWithSettersInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "accumulateCurrentYear",
-    values: [BigNumberish, BigNumberish, BigNumberish, BigNumberish]
+    values: [BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "accumulateFromPastYears",
-    values: [BigNumberish, BigNumberish, BigNumberish, BigNumberish]
+    values: [BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "blockWeek",
@@ -69,7 +67,7 @@ interface SmtVestingWithSettersInterface extends ethers.utils.Interface {
     functionFragment: "blockYear",
     values: [BigNumberish]
   ): string;
-  encodeFunctionData(functionFragment: "claim", values?: undefined): string;
+  encodeFunctionData(functionFragment: "claim", values: [BigNumberish]): string;
   encodeFunctionData(
     functionFragment: "claimableAmount",
     values?: undefined
@@ -90,14 +88,6 @@ interface SmtVestingWithSettersInterface extends ethers.utils.Interface {
   encodeFunctionData(
     functionFragment: "renounceOwnership",
     values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setFirstYCBClaimed",
-    values: [boolean]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setLastClaimedBlock",
-    values: [BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "setToken", values: [string]): string;
   encodeFunctionData(functionFragment: "token", values?: undefined): string;
@@ -178,14 +168,6 @@ interface SmtVestingWithSettersInterface extends ethers.utils.Interface {
     functionFragment: "renounceOwnership",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "setFirstYCBClaimed",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setLastClaimedBlock",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "setToken", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "token", data: BytesLike): Result;
   decodeFunctionResult(
@@ -230,9 +212,11 @@ interface SmtVestingWithSettersInterface extends ethers.utils.Interface {
   ): Result;
 
   events: {
+    "Claim(address,uint256)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
   };
 
+  getEvent(nameOrSignatureOrTopic: "Claim"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
 }
 
@@ -282,46 +266,38 @@ export class SmtVestingWithSetters extends Contract {
   functions: {
     accumulateAnualComBatch(
       isFirstYCBClaimed: boolean,
+      blockNumber: BigNumberish,
       lastClaimedBlock: BigNumberish,
-      cYear: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
     "accumulateAnualComBatch(bool,uint256,uint256)"(
       isFirstYCBClaimed: boolean,
+      blockNumber: BigNumberish,
       lastClaimedBlock: BigNumberish,
-      cYear: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
     accumulateCurrentYear(
       blockNumber: BigNumberish,
-      cYear: BigNumberish,
-      cWeek: BigNumberish,
       lastClaimedBlock: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
-    "accumulateCurrentYear(uint256,uint256,uint256,uint256)"(
+    "accumulateCurrentYear(uint256,uint256)"(
       blockNumber: BigNumberish,
-      cYear: BigNumberish,
-      cWeek: BigNumberish,
       lastClaimedBlock: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
     accumulateFromPastYears(
       blockNumber: BigNumberish,
-      cYear: BigNumberish,
-      cWeek: BigNumberish,
       lastClaimedBlock: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
-    "accumulateFromPastYears(uint256,uint256,uint256,uint256)"(
+    "accumulateFromPastYears(uint256,uint256)"(
       blockNumber: BigNumberish,
-      cYear: BigNumberish,
-      cWeek: BigNumberish,
       lastClaimedBlock: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
@@ -346,7 +322,8 @@ export class SmtVestingWithSetters extends Contract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
-    claim(
+    "claim(uint256)"(
+      blockNumber: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -354,9 +331,14 @@ export class SmtVestingWithSetters extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    claimableAmount(overrides?: CallOverrides): Promise<[BigNumber]>;
-
     "claimableAmount()"(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    "claimableAmount(bool,uint256,uint256)"(
+      isFirstYCBClaimed: boolean,
+      blockNumber: BigNumberish,
+      lCdBlock: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
 
     firstYCBClaimed(overrides?: CallOverrides): Promise<[boolean]>;
 
@@ -379,26 +361,6 @@ export class SmtVestingWithSetters extends Contract {
     ): Promise<ContractTransaction>;
 
     "renounceOwnership()"(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    setFirstYCBClaimed(
-      _firstYCBClaimed: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    "setFirstYCBClaimed(bool)"(
-      _firstYCBClaimed: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    setLastClaimedBlock(
-      _lastClaimedBlock: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    "setLastClaimedBlock(uint256)"(
-      _lastClaimedBlock: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -525,46 +487,38 @@ export class SmtVestingWithSetters extends Contract {
 
   accumulateAnualComBatch(
     isFirstYCBClaimed: boolean,
+    blockNumber: BigNumberish,
     lastClaimedBlock: BigNumberish,
-    cYear: BigNumberish,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
   "accumulateAnualComBatch(bool,uint256,uint256)"(
     isFirstYCBClaimed: boolean,
+    blockNumber: BigNumberish,
     lastClaimedBlock: BigNumberish,
-    cYear: BigNumberish,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
   accumulateCurrentYear(
     blockNumber: BigNumberish,
-    cYear: BigNumberish,
-    cWeek: BigNumberish,
     lastClaimedBlock: BigNumberish,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  "accumulateCurrentYear(uint256,uint256,uint256,uint256)"(
+  "accumulateCurrentYear(uint256,uint256)"(
     blockNumber: BigNumberish,
-    cYear: BigNumberish,
-    cWeek: BigNumberish,
     lastClaimedBlock: BigNumberish,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
   accumulateFromPastYears(
     blockNumber: BigNumberish,
-    cYear: BigNumberish,
-    cWeek: BigNumberish,
     lastClaimedBlock: BigNumberish,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  "accumulateFromPastYears(uint256,uint256,uint256,uint256)"(
+  "accumulateFromPastYears(uint256,uint256)"(
     blockNumber: BigNumberish,
-    cYear: BigNumberish,
-    cWeek: BigNumberish,
     lastClaimedBlock: BigNumberish,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
@@ -589,7 +543,8 @@ export class SmtVestingWithSetters extends Contract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  claim(
+  "claim(uint256)"(
+    blockNumber: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -597,9 +552,14 @@ export class SmtVestingWithSetters extends Contract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  claimableAmount(overrides?: CallOverrides): Promise<BigNumber>;
-
   "claimableAmount()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+  "claimableAmount(bool,uint256,uint256)"(
+    isFirstYCBClaimed: boolean,
+    blockNumber: BigNumberish,
+    lCdBlock: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
 
   firstYCBClaimed(overrides?: CallOverrides): Promise<boolean>;
 
@@ -622,26 +582,6 @@ export class SmtVestingWithSetters extends Contract {
   ): Promise<ContractTransaction>;
 
   "renounceOwnership()"(
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  setFirstYCBClaimed(
-    _firstYCBClaimed: boolean,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  "setFirstYCBClaimed(bool)"(
-    _firstYCBClaimed: boolean,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  setLastClaimedBlock(
-    _lastClaimedBlock: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  "setLastClaimedBlock(uint256)"(
-    _lastClaimedBlock: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -768,46 +708,38 @@ export class SmtVestingWithSetters extends Contract {
   callStatic: {
     accumulateAnualComBatch(
       isFirstYCBClaimed: boolean,
+      blockNumber: BigNumberish,
       lastClaimedBlock: BigNumberish,
-      cYear: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     "accumulateAnualComBatch(bool,uint256,uint256)"(
       isFirstYCBClaimed: boolean,
+      blockNumber: BigNumberish,
       lastClaimedBlock: BigNumberish,
-      cYear: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     accumulateCurrentYear(
       blockNumber: BigNumberish,
-      cYear: BigNumberish,
-      cWeek: BigNumberish,
       lastClaimedBlock: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    "accumulateCurrentYear(uint256,uint256,uint256,uint256)"(
+    "accumulateCurrentYear(uint256,uint256)"(
       blockNumber: BigNumberish,
-      cYear: BigNumberish,
-      cWeek: BigNumberish,
       lastClaimedBlock: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     accumulateFromPastYears(
       blockNumber: BigNumberish,
-      cYear: BigNumberish,
-      cWeek: BigNumberish,
       lastClaimedBlock: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    "accumulateFromPastYears(uint256,uint256,uint256,uint256)"(
+    "accumulateFromPastYears(uint256,uint256)"(
       blockNumber: BigNumberish,
-      cYear: BigNumberish,
-      cWeek: BigNumberish,
       lastClaimedBlock: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -832,13 +764,21 @@ export class SmtVestingWithSetters extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    claim(overrides?: CallOverrides): Promise<void>;
+    "claim(uint256)"(
+      blockNumber: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     "claim()"(overrides?: CallOverrides): Promise<void>;
 
-    claimableAmount(overrides?: CallOverrides): Promise<BigNumber>;
-
     "claimableAmount()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "claimableAmount(bool,uint256,uint256)"(
+      isFirstYCBClaimed: boolean,
+      blockNumber: BigNumberish,
+      lCdBlock: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     firstYCBClaimed(overrides?: CallOverrides): Promise<boolean>;
 
@@ -859,26 +799,6 @@ export class SmtVestingWithSetters extends Contract {
     renounceOwnership(overrides?: CallOverrides): Promise<void>;
 
     "renounceOwnership()"(overrides?: CallOverrides): Promise<void>;
-
-    setFirstYCBClaimed(
-      _firstYCBClaimed: boolean,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    "setFirstYCBClaimed(bool)"(
-      _firstYCBClaimed: boolean,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setLastClaimedBlock(
-      _lastClaimedBlock: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    "setLastClaimedBlock(uint256)"(
-      _lastClaimedBlock: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
 
     setToken(_token: string, overrides?: CallOverrides): Promise<void>;
 
@@ -999,6 +919,14 @@ export class SmtVestingWithSetters extends Contract {
   };
 
   filters: {
+    Claim(
+      owner: string | null,
+      amount: null
+    ): TypedEventFilter<
+      [string, BigNumber],
+      { owner: string; amount: BigNumber }
+    >;
+
     OwnershipTransferred(
       previousOwner: string | null,
       newOwner: string | null
@@ -1011,46 +939,38 @@ export class SmtVestingWithSetters extends Contract {
   estimateGas: {
     accumulateAnualComBatch(
       isFirstYCBClaimed: boolean,
+      blockNumber: BigNumberish,
       lastClaimedBlock: BigNumberish,
-      cYear: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     "accumulateAnualComBatch(bool,uint256,uint256)"(
       isFirstYCBClaimed: boolean,
+      blockNumber: BigNumberish,
       lastClaimedBlock: BigNumberish,
-      cYear: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     accumulateCurrentYear(
       blockNumber: BigNumberish,
-      cYear: BigNumberish,
-      cWeek: BigNumberish,
       lastClaimedBlock: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    "accumulateCurrentYear(uint256,uint256,uint256,uint256)"(
+    "accumulateCurrentYear(uint256,uint256)"(
       blockNumber: BigNumberish,
-      cYear: BigNumberish,
-      cWeek: BigNumberish,
       lastClaimedBlock: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     accumulateFromPastYears(
       blockNumber: BigNumberish,
-      cYear: BigNumberish,
-      cWeek: BigNumberish,
       lastClaimedBlock: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    "accumulateFromPastYears(uint256,uint256,uint256,uint256)"(
+    "accumulateFromPastYears(uint256,uint256)"(
       blockNumber: BigNumberish,
-      cYear: BigNumberish,
-      cWeek: BigNumberish,
       lastClaimedBlock: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -1075,7 +995,8 @@ export class SmtVestingWithSetters extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    claim(
+    "claim(uint256)"(
+      blockNumber: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -1083,9 +1004,14 @@ export class SmtVestingWithSetters extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    claimableAmount(overrides?: CallOverrides): Promise<BigNumber>;
-
     "claimableAmount()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "claimableAmount(bool,uint256,uint256)"(
+      isFirstYCBClaimed: boolean,
+      blockNumber: BigNumberish,
+      lCdBlock: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     firstYCBClaimed(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1108,26 +1034,6 @@ export class SmtVestingWithSetters extends Contract {
     ): Promise<BigNumber>;
 
     "renounceOwnership()"(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    setFirstYCBClaimed(
-      _firstYCBClaimed: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    "setFirstYCBClaimed(bool)"(
-      _firstYCBClaimed: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    setLastClaimedBlock(
-      _lastClaimedBlock: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    "setLastClaimedBlock(uint256)"(
-      _lastClaimedBlock: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -1255,46 +1161,38 @@ export class SmtVestingWithSetters extends Contract {
   populateTransaction: {
     accumulateAnualComBatch(
       isFirstYCBClaimed: boolean,
+      blockNumber: BigNumberish,
       lastClaimedBlock: BigNumberish,
-      cYear: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     "accumulateAnualComBatch(bool,uint256,uint256)"(
       isFirstYCBClaimed: boolean,
+      blockNumber: BigNumberish,
       lastClaimedBlock: BigNumberish,
-      cYear: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     accumulateCurrentYear(
       blockNumber: BigNumberish,
-      cYear: BigNumberish,
-      cWeek: BigNumberish,
       lastClaimedBlock: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    "accumulateCurrentYear(uint256,uint256,uint256,uint256)"(
+    "accumulateCurrentYear(uint256,uint256)"(
       blockNumber: BigNumberish,
-      cYear: BigNumberish,
-      cWeek: BigNumberish,
       lastClaimedBlock: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     accumulateFromPastYears(
       blockNumber: BigNumberish,
-      cYear: BigNumberish,
-      cWeek: BigNumberish,
       lastClaimedBlock: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    "accumulateFromPastYears(uint256,uint256,uint256,uint256)"(
+    "accumulateFromPastYears(uint256,uint256)"(
       blockNumber: BigNumberish,
-      cYear: BigNumberish,
-      cWeek: BigNumberish,
       lastClaimedBlock: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
@@ -1319,7 +1217,8 @@ export class SmtVestingWithSetters extends Contract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    claim(
+    "claim(uint256)"(
+      blockNumber: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1327,9 +1226,14 @@ export class SmtVestingWithSetters extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    claimableAmount(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
     "claimableAmount()"(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "claimableAmount(bool,uint256,uint256)"(
+      isFirstYCBClaimed: boolean,
+      blockNumber: BigNumberish,
+      lCdBlock: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1358,26 +1262,6 @@ export class SmtVestingWithSetters extends Contract {
     ): Promise<PopulatedTransaction>;
 
     "renounceOwnership()"(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    setFirstYCBClaimed(
-      _firstYCBClaimed: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    "setFirstYCBClaimed(bool)"(
-      _firstYCBClaimed: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    setLastClaimedBlock(
-      _lastClaimedBlock: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    "setLastClaimedBlock(uint256)"(
-      _lastClaimedBlock: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 

@@ -4,8 +4,8 @@ const { provider } = ethers;
 
 export default class Time {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  async advanceBlock(): Promise<any> {
-    provider.send('evm_mine', []);
+  advanceBlock(): Promise<any> {
+    return provider.send('evm_mine', []);
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

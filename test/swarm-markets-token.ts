@@ -13,7 +13,7 @@ let SMTContract: SwarmMarketsToken;
 
 const tokenSupply = ethers.constants.One.mul(250000000);
 
-describe('STM', function () {
+describe('SwarmMarketsToken contract', function () {
   before(async () => {
     [, kakaroto] = await ethers.getSigners();
     kakarotoAddress = await kakaroto.getAddress();

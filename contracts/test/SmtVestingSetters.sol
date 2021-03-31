@@ -5,11 +5,27 @@ pragma experimental ABIEncoderV2;
 import "../SmtVesting.sol";
 
 contract SmtVestingWithSetters is SmtVesting {
-  function setFirstYCBClaimed(bool _firstYCBClaimed) public {
-    firstYCBClaimed = _firstYCBClaimed;
+
+  function claim(
+    uint256 blockNumber
+  ) external onlyOwner {
+      uint256 amount = claimableAmount(firstYCBClaimed, blockNumber, lastClaimedBlock);
+      lastClaimedBlock = blockNumber;
+      firstYCBClaimed = true;
+      emit Claim(owner(), amount);
+      token.transfer(_msgSender(), amount);
   }
 
-  function setLastClaimedBlock(uint256 _lastClaimedBlock) public {
-    lastClaimedBlock = _lastClaimedBlock;
+  function claimableAmount(
+    bool isFirstYCBClaimed,
+    uint256 blockNumber,
+    uint256 lCdBlock
+  ) public view returns (uint256) {
+      return
+          _claimableAmount(
+              isFirstYCBClaimed,
+              blockNumber,
+              lCdBlock
+          );
   }
 }
