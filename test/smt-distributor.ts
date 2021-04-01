@@ -13,12 +13,10 @@ let karpincho: Signer;
 let deployerAddress: string;
 let kakarotoAddress: string;
 let vegetaAddress: string;
-let karpinchoAddress: string;
 
 let SMTContract: SwarmMarketsToken;
 let smtDisctributorContract: SmtDistributor;
 let smtDisctributorContractKakaroto: SmtDistributor;
-// let smtDisctributorContractVegeta: SmtDistributor;
 let smtDisctributorContractKarpincho: SmtDistributor;
 
 let SmtDistributorFactory: ContractFactory;
@@ -30,11 +28,10 @@ describe('SmtDistributor contract', function () {
 
   before(async () => {
     [deployer, kakaroto, vegeta, karpincho] = await ethers.getSigners();
-    [deployerAddress, kakarotoAddress, vegetaAddress, karpinchoAddress] = await Promise.all([
+    [deployerAddress, kakarotoAddress, vegetaAddress] = await Promise.all([
       deployer.getAddress(),
       kakaroto.getAddress(),
       vegeta.getAddress(),
-      karpincho.getAddress(),
     ]);
 
     SmtDistributorFactory = await ethers.getContractFactory('SmtDistributor');
@@ -131,14 +128,8 @@ describe('SmtDistributor contract', function () {
   });
 
   describe('#claim', () => {
-    it('nothing should happend if non-beneficiary calls claim', async () => {
-      const distributorInitialBlance = await SMTContract.balanceOf(smtDisctributorContractKarpincho.address);
-      const karpinchoInitialBlance = await SMTContract.balanceOf(karpinchoAddress);
-
-      await smtDisctributorContractKarpincho.claim();
-
-      expect(await SMTContract.balanceOf(smtDisctributorContractKarpincho.address)).to.eq(distributorInitialBlance);
-      expect(await SMTContract.balanceOf(karpinchoAddress)).to.eq(karpinchoInitialBlance);
+    it('should revert if non-beneficiary calls claim', async () => {
+      await expect(smtDisctributorContractKarpincho.claim()).to.be.revertedWith('no rewards');
     });
 
     it('a beneficiary should be able to claim its current reward', async () => {

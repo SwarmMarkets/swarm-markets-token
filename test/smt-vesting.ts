@@ -136,7 +136,11 @@ describe('SmtVesting contract', function () {
         acc = acc.add(ethers.utils.parseEther(data[7]['AnualCommunityBatch']));
         acc = acc.add(ethers.utils.parseEther(data[8]['AnualCommunityBatch']));
 
-        const accumulateAnualComBatch = await smtVesting.accumulateAnualComBatch(true, 2102400 * 8 + initialBlock, initialBlock);
+        const accumulateAnualComBatch = await smtVesting.accumulateAnualComBatch(
+          true,
+          2102400 * 8 + initialBlock,
+          initialBlock,
+        );
 
         expect(accumulateAnualComBatch).to.eq(acc);
       });
@@ -345,9 +349,7 @@ describe('SmtVesting contract', function () {
             const initialVetingBalance = await smt.balanceOf(smtVesting.address);
             const initialOwnerBalance = await smt.balanceOf(deployerAddress);
 
-            await smtVesting['claim(uint256)'](
-              blockNumber
-            );
+            await smtVesting['claim(uint256)'](blockNumber);
 
             let amount = ethers.BigNumber.from(0);
             if (w === 0) {
@@ -372,7 +374,7 @@ describe('SmtVesting contract', function () {
             expect(await smtVesting.firstYCBClaimed()).to.eq(true);
           }
         }
-      })
+      });
 
       it('should claim some amount and transfer to the owner', async () => {
         await time.advanceBlockTo(20160);

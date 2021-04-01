@@ -64,8 +64,12 @@ contract SmtDistributor is Ownable {
         return true;
     }
 
+    /**
+     * @dev Claims beneficiary reward.
+     */
     function claim() public returns (bool) {
         uint256 amount = beneficiaries[_msgSender()];
+        require(amount > 0, "no rewards");
         beneficiaries[_msgSender()] = 0;
 
         emit Claim(_msgSender(), amount);
