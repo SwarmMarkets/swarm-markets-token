@@ -11,7 +11,7 @@ async function main(): Promise<void> {
   await hre.run('verify:verify', {
     address: deploymentData.SwarmMarketsToken.address,
     constructorArguments: [deploymentData.SmtVesting.address],
-    contract: 'contracts/SwarmMarketsToken.sol:SwarmMarketsToken'
+    contract: 'contracts/SwarmMarketsToken.sol:SwarmMarketsToken',
   });
 
   // SmtVesting
