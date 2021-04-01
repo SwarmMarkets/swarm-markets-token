@@ -21,8 +21,6 @@ let smtDisctributorContractKarpincho: SmtDistributor;
 
 let SmtDistributorFactory: ContractFactory;
 
-const tokenSupply = ethers.constants.One.mul(250000000);
-
 describe('SmtDistributor contract', function () {
   const reverter = new Reverter();
 
@@ -37,7 +35,7 @@ describe('SmtDistributor contract', function () {
     SmtDistributorFactory = await ethers.getContractFactory('SmtDistributor');
     const SwarmMarketsTokenFactory = await ethers.getContractFactory('SwarmMarketsToken');
 
-    SMTContract = (await SwarmMarketsTokenFactory.deploy(tokenSupply, deployerAddress)) as SwarmMarketsToken;
+    SMTContract = (await SwarmMarketsTokenFactory.deploy(deployerAddress)) as SwarmMarketsToken;
     await SMTContract.deployed();
   });
 

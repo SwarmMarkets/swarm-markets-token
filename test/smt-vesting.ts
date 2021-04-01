@@ -22,8 +22,6 @@ let smtVesting: SmtVestingWithSetters;
 let smtVestingKakaroto: SmtVestingWithSetters;
 let smt: SwarmMarketsToken;
 
-const tokenSupply = ethers.constants.WeiPerEther.mul(250000000);
-
 const getData = (): Promise<any> => {
   const results: any[] = [];
   const myPromise = new Promise(resolve => {
@@ -59,7 +57,7 @@ describe('SmtVesting contract', function () {
 
     const SwarmMarketsTokenFactory = await ethers.getContractFactory('SwarmMarketsToken');
 
-    smt = (await SwarmMarketsTokenFactory.deploy(tokenSupply, smtVesting.address)) as SwarmMarketsToken;
+    smt = (await SwarmMarketsTokenFactory.deploy(smtVesting.address)) as SwarmMarketsToken;
     await smt.deployed();
 
     await reverter.snapshot();

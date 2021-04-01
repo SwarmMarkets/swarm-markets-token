@@ -10,6 +10,11 @@
 
 ### Kovan
 
+- **SwarmMarketsToken**: `0x0B73827564d7335e1caF198C0F0fa463848f4F71`
+- **SmtDistributor**: `0xC00d1f0B74c88dc449634a6104988F9dE6f8cb70`
+- **SmtVesting**: `0xC31c50a613e1C66C3A1605646C91A9C476E9d90d`
+
+- [Deployment artifacts](deloyment/kovan.json)
 
 ## Development
 
