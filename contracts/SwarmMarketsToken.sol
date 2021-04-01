@@ -3,8 +3,6 @@ pragma solidity ^0.7.0;
 
 import "@openzeppelin/contracts/presets/ERC20PresetFixedSupply.sol";
 
-import "hardhat/console.sol";
-
 contract SwarmMarketsToken is ERC20PresetFixedSupply {
     /**
      * See {ERC20PresetFixedSupply-constructor}.

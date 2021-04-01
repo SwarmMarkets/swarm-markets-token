@@ -11,6 +11,7 @@ async function main(): Promise<void> {
   await hre.run('verify:verify', {
     address: deploymentData.SwarmMarketsToken.address,
     constructorArguments: [deploymentData.SmtVesting.address],
+    contract: 'contracts/SwarmMarketsToken.sol:SwarmMarketsToken'
   });
 
   // SmtVesting
@@ -27,8 +28,6 @@ async function main(): Promise<void> {
 }
 
 async function read(filename: string): Promise<any> {
-  // const deploymentsFile = await getDeploymentFile();
-
   try {
     return JSON.parse(await fs.readFile(filename, 'utf8'));
   } catch (e) {
