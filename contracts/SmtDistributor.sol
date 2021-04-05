@@ -45,7 +45,7 @@ contract SmtDistributor is Ownable {
      * @param rewards Array indicating each benaficiary reward from the total to be deposited.
      * @param totalAmount Total amount to be deposited.
      */
-    function depositRewards(Reward[] memory rewards, uint256 totalAmount) public onlyOwner returns (bool) {
+    function depositRewards(Reward[] memory rewards, uint256 totalAmount) external onlyOwner returns (bool) {
         require(totalAmount > 0, "totalAmount is zero");
         require(rewards.length > 0, "rewards can not be empty");
         require(token.transferFrom(_msgSender(), address(this), totalAmount), "Transfer failed");
@@ -65,7 +65,7 @@ contract SmtDistributor is Ownable {
     /**
      * @dev Claims beneficiary reward.
      */
-    function claim() public returns (bool) {
+    function claim() external returns (bool) {
         uint256 amount = beneficiaries[_msgSender()];
         require(amount > 0, "no rewards");
         beneficiaries[_msgSender()] = 0;
