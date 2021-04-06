@@ -1,4 +1,4 @@
-//SPDX-License-Identifier: Unlicense
+//SPDX-License-Identifier: GPL-3.0-only
 pragma solidity ^0.7.0;
 pragma experimental ABIEncoderV2;
 
@@ -35,12 +35,13 @@ contract SmtVesting is Ownable {
     /**
      * @dev Sets the value for {initialBloc}.
      *
-     * Sets ownership to the account that deploys the contract.
+     * Sets ownership to the given `_owner`.
      *
      */
-    constructor() {
+    constructor(address _owner) {
         initialBlock = block.number;
         lastClaimedBlock = block.number;
+        transferOwnership(_owner);
     }
 
     /**

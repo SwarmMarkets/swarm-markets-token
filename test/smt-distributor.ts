@@ -40,13 +40,13 @@ describe('SmtDistributor contract', function () {
   });
 
   it('should not be able to deploy with zero address for token', async () => {
-    await expect(SmtDistributorFactory.deploy(ethers.constants.AddressZero)).to.be.revertedWith(
+    await expect(SmtDistributorFactory.deploy(ethers.constants.AddressZero, deployerAddress)).to.be.revertedWith(
       'token is the zero address',
     );
   });
 
   it('should be able to deploy with non zero address for token', async () => {
-    smtDisctributorContract = (await SmtDistributorFactory.deploy(SMTContract.address)) as SmtDistributor;
+    smtDisctributorContract = (await SmtDistributorFactory.deploy(SMTContract.address, deployerAddress)) as SmtDistributor;
     await smtDisctributorContract.deployed();
 
     smtDisctributorContractKakaroto = smtDisctributorContract.connect(kakaroto);

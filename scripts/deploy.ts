@@ -3,6 +3,7 @@ import { ContractFactory } from 'ethers';
 import { TransactionResponse } from '@ethersproject/abstract-provider';
 import { SwarmMarketsToken, SmtDistributor, SmtVesting } from '../typechain';
 
+import assert from 'assert';
 import ora, { Ora } from 'ora';
 import fsExtra from 'fs-extra';
 import path from 'path';
@@ -15,82 +16,90 @@ import SmtVestingArtifact from '../artifacts/contracts/SmtVesting.sol/SmtVesting
 
 let spinner: Ora;
 
+const requiredConfigs = [
+  'TREASURY_ACCOUNT',
+];
+requiredConfigs.forEach(conf => assert(process.env[conf], `Missing configuration variable: ${conf}`));
+
 async function main(): Promise<void> {
   const { ethers } = hre;
   // const [deployer] = await ethers.getSigners();
   // const deployerAddress = await deployer.getAddress();
   let deploymentData = await read();
 
-  startLog('Deploying SmtVesting contract');
-  const SmtVestingFactory: ContractFactory = await ethers.getContractFactory('SmtVesting');
-  const SmtVestingContract: SmtVesting = (await SmtVestingFactory.deploy()) as SmtVesting;
-  updatetLog(`Deploying SmtVesting contract - txHash: ${SmtVestingContract.deployTransaction.hash}`);
-  await SmtVestingContract.deployed();
+  if (process.env.TREASURY_ACCOUNT) {
+    startLog('Deploying SmtVesting contract');
+    const SmtVestingFactory: ContractFactory = await ethers.getContractFactory('SmtVesting');
+    const SmtVestingContract: SmtVesting = (await SmtVestingFactory.deploy(process.env.TREASURY_ACCOUNT)) as SmtVesting;
+    updatetLog(`Deploying SmtVesting contract - txHash: ${SmtVestingContract.deployTransaction.hash}`);
+    await SmtVestingContract.deployed();
 
-  deploymentData = {
-    ...deploymentData,
-    SmtVesting: {
-      address: SmtVestingContract.address,
-      abi: SmtVestingArtifact.abi,
-      deployTransaction: await getRecipt(SmtVestingContract.deployTransaction),
-    },
-  };
+    deploymentData = {
+      ...deploymentData,
+      SmtVesting: {
+        address: SmtVestingContract.address,
+        abi: SmtVestingArtifact.abi,
+        deployTransaction: await getRecipt(SmtVestingContract.deployTransaction),
+      },
+    };
 
-  await write(deploymentData);
-  stopLog(
-    `SmtVesting deployed - txHash: ${SmtVestingContract.deployTransaction.hash} - address: ${SmtVestingContract.address}`,
-  );
+    await write(deploymentData);
+    stopLog(
+      `SmtVesting deployed - txHash: ${SmtVestingContract.deployTransaction.hash} - address: ${SmtVestingContract.address}`,
+    );
 
-  startLog('Deploying SwarmMarketsToken contract');
-  const SwarmMarketsTokenFactory: ContractFactory = await ethers.getContractFactory('SwarmMarketsToken');
-  const SwarmMarketsTokenContract: SwarmMarketsToken = (await SwarmMarketsTokenFactory.deploy(
-    deploymentData.SmtVesting.address,
-  )) as SwarmMarketsToken;
-  updatetLog(`Deploying SwarmMarketsToken contract - txHash: ${SwarmMarketsTokenContract.deployTransaction.hash}`);
-  await SwarmMarketsTokenContract.deployed();
+    startLog('Deploying SwarmMarketsToken contract');
+    const SwarmMarketsTokenFactory: ContractFactory = await ethers.getContractFactory('SwarmMarketsToken');
+    const SwarmMarketsTokenContract: SwarmMarketsToken = (await SwarmMarketsTokenFactory.deploy(
+      deploymentData.SmtVesting.address,
+    )) as SwarmMarketsToken;
+    updatetLog(`Deploying SwarmMarketsToken contract - txHash: ${SwarmMarketsTokenContract.deployTransaction.hash}`);
+    await SwarmMarketsTokenContract.deployed();
 
-  deploymentData = {
-    ...deploymentData,
-    SwarmMarketsToken: {
-      address: SwarmMarketsTokenContract.address,
-      abi: SwarmMarketsTokenArtifact.abi,
-      deployTransaction: await getRecipt(SwarmMarketsTokenContract.deployTransaction),
-    },
-  };
+    deploymentData = {
+      ...deploymentData,
+      SwarmMarketsToken: {
+        address: SwarmMarketsTokenContract.address,
+        abi: SwarmMarketsTokenArtifact.abi,
+        deployTransaction: await getRecipt(SwarmMarketsTokenContract.deployTransaction),
+      },
+    };
 
-  await write(deploymentData);
-  stopLog(
-    `SwarmMarketsToken deployed - txHash: ${SwarmMarketsTokenContract.deployTransaction.hash} - address: ${SwarmMarketsTokenContract.address}`,
-  );
+    await write(deploymentData);
+    stopLog(
+      `SwarmMarketsToken deployed - txHash: ${SwarmMarketsTokenContract.deployTransaction.hash} - address: ${SwarmMarketsTokenContract.address}`,
+    );
 
-  startLog('Deploying SmtDistributor contract');
-  const SmtDistributorFactory: ContractFactory = await ethers.getContractFactory('SmtDistributor');
-  const SmtDistributorContract: SmtDistributor = (await SmtDistributorFactory.deploy(
-    deploymentData.SwarmMarketsToken.address,
-  )) as SmtDistributor;
-  updatetLog(`Deploying SmtDistributor contract - txHash: ${SmtDistributorContract.deployTransaction.hash}`);
-  await SmtDistributorContract.deployed();
+    startLog('Deploying SmtDistributor contract');
+    const SmtDistributorFactory: ContractFactory = await ethers.getContractFactory('SmtDistributor');
+    const SmtDistributorContract: SmtDistributor = (await SmtDistributorFactory.deploy(
+      deploymentData.SwarmMarketsToken.address,
+      process.env.TREASURY_ACCOUNT
+    )) as SmtDistributor;
+    updatetLog(`Deploying SmtDistributor contract - txHash: ${SmtDistributorContract.deployTransaction.hash}`);
+    await SmtDistributorContract.deployed();
 
-  deploymentData = {
-    ...deploymentData,
-    SmtDistributor: {
-      address: SmtDistributorContract.address,
-      abi: SmtDistributorArtifact.abi,
-      deployTransaction: await getRecipt(SmtDistributorContract.deployTransaction),
-    },
-  };
+    deploymentData = {
+      ...deploymentData,
+      SmtDistributor: {
+        address: SmtDistributorContract.address,
+        abi: SmtDistributorArtifact.abi,
+        deployTransaction: await getRecipt(SmtDistributorContract.deployTransaction),
+      },
+    };
 
-  await write(deploymentData);
-  stopLog(
-    `SmtDistributor deployed - txHash: ${SmtDistributorContract.deployTransaction.hash} - address: ${SmtDistributorContract.address}`,
-  );
+    await write(deploymentData);
+    stopLog(
+      `SmtDistributor deployed - txHash: ${SmtDistributorContract.deployTransaction.hash} - address: ${SmtDistributorContract.address}`,
+    );
 
-  // Set SmtVesting token
-  startLog('Setting SmtVesting token');
-  const piaTx = await SmtVestingContract.setToken(deploymentData.SwarmMarketsToken.address);
-  updatetLog(`Setting SmtVesting token - txHash: ${piaTx.hash}`);
-  await piaTx.wait();
-  stopLog(`Done setting SmtVesting token - txHash: ${piaTx.hash}`);
+    // Set SmtVesting token
+    startLog('Setting SmtVesting token');
+    const piaTx = await SmtVestingContract.setToken(deploymentData.SwarmMarketsToken.address);
+    updatetLog(`Setting SmtVesting token - txHash: ${piaTx.hash}`);
+    await piaTx.wait();
+    stopLog(`Done setting SmtVesting token - txHash: ${piaTx.hash}`);
+  }
 }
 
 async function read(): Promise<any> {

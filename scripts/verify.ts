@@ -1,30 +1,38 @@
 import hre from 'hardhat';
 import path from 'path';
 import { promises as fs } from 'fs';
+import assert from 'assert';
 
 import { getChainId, networkNames } from '@openzeppelin/upgrades-core';
+
+const requiredConfigs = [
+  'TREASURY_ACCOUNT',
+];
+requiredConfigs.forEach(conf => assert(process.env[conf], `Missing configuration variable: ${conf}`));
 
 async function main(): Promise<void> {
   const deploymentData = await read(await getDeploymentFile());
 
-  // SwarmMarketsToken
-  await hre.run('verify:verify', {
-    address: deploymentData.SwarmMarketsToken.address,
-    constructorArguments: [deploymentData.SmtVesting.address],
-    contract: 'contracts/SwarmMarketsToken.sol:SwarmMarketsToken',
-  });
+  if (process.env.TREASURY_ACCOUNT) {
+    // SwarmMarketsToken
+    await hre.run('verify:verify', {
+      address: deploymentData.SwarmMarketsToken.address,
+      constructorArguments: [deploymentData.SmtVesting.address],
+      contract: 'contracts/SwarmMarketsToken.sol:SwarmMarketsToken',
+    });
 
-  // SmtVesting
-  await hre.run('verify:verify', {
-    address: deploymentData.SmtVesting.address,
-    constructorArguments: [],
-  });
+    // SmtVesting
+    await hre.run('verify:verify', {
+      address: deploymentData.SmtVesting.address,
+      constructorArguments: [process.env.TREASURY_ACCOUNT],
+    });
 
-  // SmtDistributor
-  await hre.run('verify:verify', {
-    address: deploymentData.SmtDistributor.address,
-    constructorArguments: [deploymentData.SwarmMarketsToken.address],
-  });
+    // SmtDistributor
+    await hre.run('verify:verify', {
+      address: deploymentData.SmtDistributor.address,
+      constructorArguments: [deploymentData.SwarmMarketsToken.address, process.env.TREASURY_ACCOUNT],
+    });
+  }
 }
 
 async function read(filename: string): Promise<any> {

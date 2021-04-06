@@ -6,6 +6,8 @@ import "../SmtVesting.sol";
 
 contract SmtVestingWithSetters is SmtVesting {
 
+  constructor(address _owner) SmtVesting(_owner) { } // solhint-disable-line no-empty-blocks
+
   function claim(
     uint256 blockNumber
   ) external onlyOwner {
