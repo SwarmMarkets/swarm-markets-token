@@ -5,6 +5,7 @@
   "main": "index.js",
   "license": "MIT",
   "devDependencies": {
+    "@chainlink/contracts": "^0.1.6",
     "@nomiclabs/hardhat-ethers": "^2.0.2",
     "@nomiclabs/hardhat-etherscan": "^2.1.1",
     "@nomiclabs/hardhat-solhint": "^2.0.0",
@@ -64,7 +65,7 @@
     "prettier:json:md": "prettier --config .prettierrc --write \"**/*.{json,md}\"",
     "prettier": "yarn prettier:sol && yarn prettier:ts",
     "prettier:list-different": "prettier --config .prettierrc --list-different \"**/*.{js,sol,ts}\"",
-    "test": "hardhat test",
+    "test": "hardhat test /Users/lisandro/Protofire/Swarm/swarm-markets-token/test/smt-price-feed.ts",
     "test:gas": "REPORT_GAS=true hardhat test",
     "typechain": "hardhat typechain",
     "doc:uml": "sol2uml ./contracts -i mocks,test -f png -o ./docs/uml/swarm-markets-token.png",
