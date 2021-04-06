@@ -65,7 +65,7 @@
     "prettier:json:md": "prettier --config .prettierrc --write \"**/*.{json,md}\"",
     "prettier": "yarn prettier:sol && yarn prettier:ts",
     "prettier:list-different": "prettier --config .prettierrc --list-different \"**/*.{js,sol,ts}\"",
-    "test": "hardhat test /Users/lisandro/Protofire/Swarm/swarm-markets-token/test/smt-price-feed.ts",
+    "test": "hardhat test",
     "test:gas": "REPORT_GAS=true hardhat test",
     "typechain": "hardhat typechain",
     "doc:uml": "sol2uml ./contracts -i mocks,test -f png -o ./docs/uml/swarm-markets-token.png",

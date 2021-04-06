@@ -21,17 +21,17 @@ const _abi = [
     inputs: [
       {
         internalType: "address",
-        name: "",
+        name: "fromToken",
         type: "address",
       },
       {
         internalType: "address",
-        name: "",
+        name: "destToken",
         type: "address",
       },
       {
         internalType: "uint256",
-        name: "",
+        name: "limit",
         type: "uint256",
       },
     ],

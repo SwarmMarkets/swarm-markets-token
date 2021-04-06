@@ -1,7 +1,5 @@
-//SPDX-License-Identifier: Unlicense
+//SPDX-License-Identifier: GPL-3.0-only
 pragma solidity ^0.7.0;
-
-import "@openzeppelin/contracts/token/ERC1155/IERC1155Receiver.sol";
 
 /**
  * @title IXTokenWrapper
@@ -9,7 +7,7 @@ import "@openzeppelin/contracts/token/ERC1155/IERC1155Receiver.sol";
  * @dev XTokenWrapper Interface.
  *
  */
-interface IXTokenWrapper is IERC1155Receiver {
+interface IXTokenWrapper {
     /**
      * @dev Token to xToken registry.
      */

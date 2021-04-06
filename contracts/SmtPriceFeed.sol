@@ -10,6 +10,8 @@ import "./interfaces/IBRegistry.sol";
 import "./interfaces/IEurPriceFeed.sol";
 import "./interfaces/IXTokenWrapper.sol";
 
+import "hardhat/console.sol";
+
 interface IDecimals {
     function decimals() external view returns (uint8);
 }
@@ -17,7 +19,7 @@ interface IDecimals {
 /**
  * @title SmtPriceFeed
  * @author Protofire
- * @dev
+ * @dev Contract module to retrieve SMT price per asset.
  */
 contract SmtPriceFeed is Ownable {
     using SafeMath for uint256;
@@ -189,18 +191,29 @@ contract SmtPriceFeed is Ownable {
     }
 
     /**
+     * @dev Gets the price of `_asset` in SMT.
+     *
+     * @param _asset address of asset to get the price.
+     */
+    function getPrice(address _asset) external view returns (uint256) {
+        uint8 assetDecimals = IDecimals(_asset).decimals();
+        return calculateAmount(_asset, 10**assetDecimals);
+    }
+
+    /**
      * @dev Gets how many SMT represents the `_amount` of `_asset`.
      *
      * @param _asset address of asset to get the amount.
      * @param _tokenAmountIn amount of `_asset`.
      */
-    function calculateAmount(address _asset, uint256 _tokenAmountIn) external view returns (uint256) {
+    function calculateAmount(address _asset, uint256 _tokenAmountIn) public view returns (uint256) {
         // get amount from some of the pools
-        uint256 amount = getLowerAmountFromPools(_asset, _tokenAmountIn);
+        uint256 amount = getAvgAmountFromPools(_asset, _tokenAmountIn);
 
         // not pool with SMT/asset pair -> calculate base on SMT/ETH pool and Asset/ETH external price feed
         if (amount == 0) {
-            uint256 ethSmtAmount = getLowerAmountFromPools(xTokenWrapper.tokenToXToken(ETH_TOKEN_ADDRESS), ONE);
+            uint256 ethSmtAmount = getAvgAmountFromPools(xTokenWrapper.tokenToXToken(ETH_TOKEN_ADDRESS), ONE);
+
             address assetEthFeed = eurPriceFeed.assetEthFeed(_asset);
 
             if (assetEthFeed != address(0)) {
@@ -209,6 +222,7 @@ contract SmtPriceFeed is Ownable {
                 if (assetEthPrice > 0) {
                     uint8 assetDecimals = IDecimals(_asset).decimals();
                     uint256 assetToEthAmount = _tokenAmountIn.mul(uint256(assetEthPrice)).div(10**assetDecimals);
+
                     amount = assetToEthAmount.mul(ethSmtAmount).div(ONE);
                 }
             }
@@ -217,18 +231,15 @@ contract SmtPriceFeed is Ownable {
         return amount;
     }
 
-    function getLowerAmountFromPools(address _asset, uint256 _tokenAmountIn) internal view returns (uint256) {
+    function getAvgAmountFromPools(address _asset, uint256 _tokenAmountIn) internal view returns (uint256) {
         address[] memory poolAddresses = registry.getBestPoolsWithLimit(_asset, smt, 10);
 
-        uint256 bestAmount;
+        uint256 totalAmount;
         for (uint256 i = 0; i < poolAddresses.length; i++) {
-            uint256 amount = calcOutGivenIn(poolAddresses[i], _asset, _tokenAmountIn);
-            if (amount > 0 && amount < bestAmount) {
-                bestAmount = amount;
-            }
+            totalAmount += calcOutGivenIn(poolAddresses[i], _asset, _tokenAmountIn);
         }
 
-        return bestAmount;
+        return totalAmount > 0 ? totalAmount.div(poolAddresses.length) : 0;
     }
 
     function calcOutGivenIn(

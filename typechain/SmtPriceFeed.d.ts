@@ -25,6 +25,7 @@ interface SmtPriceFeedInterface extends ethers.utils.Interface {
     "ONE()": FunctionFragment;
     "calculateAmount(address,uint256)": FunctionFragment;
     "eurPriceFeed()": FunctionFragment;
+    "getPrice(address)": FunctionFragment;
     "owner()": FunctionFragment;
     "registry()": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
@@ -50,6 +51,7 @@ interface SmtPriceFeedInterface extends ethers.utils.Interface {
     functionFragment: "eurPriceFeed",
     values?: undefined
   ): string;
+  encodeFunctionData(functionFragment: "getPrice", values: [string]): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(functionFragment: "registry", values?: undefined): string;
   encodeFunctionData(
@@ -89,6 +91,7 @@ interface SmtPriceFeedInterface extends ethers.utils.Interface {
     functionFragment: "eurPriceFeed",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "getPrice", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "registry", data: BytesLike): Result;
   decodeFunctionResult(
@@ -201,6 +204,13 @@ export class SmtPriceFeed extends Contract {
 
     "eurPriceFeed()"(overrides?: CallOverrides): Promise<[string]>;
 
+    getPrice(_asset: string, overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    "getPrice(address)"(
+      _asset: string,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
     owner(overrides?: CallOverrides): Promise<[string]>;
 
     "owner()"(overrides?: CallOverrides): Promise<[string]>;
@@ -300,6 +310,13 @@ export class SmtPriceFeed extends Contract {
 
   "eurPriceFeed()"(overrides?: CallOverrides): Promise<string>;
 
+  getPrice(_asset: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+  "getPrice(address)"(
+    _asset: string,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
   owner(overrides?: CallOverrides): Promise<string>;
 
   "owner()"(overrides?: CallOverrides): Promise<string>;
@@ -398,6 +415,13 @@ export class SmtPriceFeed extends Contract {
     eurPriceFeed(overrides?: CallOverrides): Promise<string>;
 
     "eurPriceFeed()"(overrides?: CallOverrides): Promise<string>;
+
+    getPrice(_asset: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+    "getPrice(address)"(
+      _asset: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     owner(overrides?: CallOverrides): Promise<string>;
 
@@ -510,6 +534,13 @@ export class SmtPriceFeed extends Contract {
 
     "eurPriceFeed()"(overrides?: CallOverrides): Promise<BigNumber>;
 
+    getPrice(_asset: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+    "getPrice(address)"(
+      _asset: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
     "owner()"(overrides?: CallOverrides): Promise<BigNumber>;
@@ -611,6 +642,16 @@ export class SmtPriceFeed extends Contract {
     eurPriceFeed(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "eurPriceFeed()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getPrice(
+      _asset: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "getPrice(address)"(
+      _asset: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 

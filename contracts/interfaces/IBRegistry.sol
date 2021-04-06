@@ -1,4 +1,4 @@
-//SPDX-License-Identifier: Unlicense
+//SPDX-License-Identifier: GPL-3.0-only
 pragma solidity ^0.7.0;
 
 /**
@@ -10,8 +10,8 @@ pragma solidity ^0.7.0;
 
 interface IBRegistry {
     function getBestPoolsWithLimit(
-        address,
-        address,
-        uint256
+        address fromToken,
+        address destToken,
+        uint256 limit
     ) external view returns (address[] memory);
 }

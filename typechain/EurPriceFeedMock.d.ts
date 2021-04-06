@@ -11,6 +11,7 @@ import {
   PopulatedTransaction,
   Contract,
   ContractTransaction,
+  Overrides,
   CallOverrides,
 } from "ethers";
 import { BytesLike } from "@ethersproject/bytes";
@@ -18,25 +19,34 @@ import { Listener, Provider } from "@ethersproject/providers";
 import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
 import { TypedEventFilter, TypedEvent, TypedListener } from "./commons";
 
-interface IBRegistryInterface extends ethers.utils.Interface {
+interface EurPriceFeedMockInterface extends ethers.utils.Interface {
   functions: {
-    "getBestPoolsWithLimit(address,address,uint256)": FunctionFragment;
+    "assetEthFeed(address)": FunctionFragment;
+    "setAssetEthFeed(address,address)": FunctionFragment;
   };
 
   encodeFunctionData(
-    functionFragment: "getBestPoolsWithLimit",
-    values: [string, string, BigNumberish]
+    functionFragment: "assetEthFeed",
+    values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setAssetEthFeed",
+    values: [string, string]
   ): string;
 
   decodeFunctionResult(
-    functionFragment: "getBestPoolsWithLimit",
+    functionFragment: "assetEthFeed",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setAssetEthFeed",
     data: BytesLike
   ): Result;
 
   events: {};
 }
 
-export class IBRegistry extends Contract {
+export class EurPriceFeedMock extends Contract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
@@ -77,85 +87,113 @@ export class IBRegistry extends Contract {
     toBlock?: string | number | undefined
   ): Promise<Array<TypedEvent<EventArgsArray & EventArgsObject>>>;
 
-  interface: IBRegistryInterface;
+  interface: EurPriceFeedMockInterface;
 
   functions: {
-    getBestPoolsWithLimit(
-      fromToken: string,
-      destToken: string,
-      limit: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[string[]]>;
+    assetEthFeed(arg0: string, overrides?: CallOverrides): Promise<[string]>;
 
-    "getBestPoolsWithLimit(address,address,uint256)"(
-      fromToken: string,
-      destToken: string,
-      limit: BigNumberish,
+    "assetEthFeed(address)"(
+      arg0: string,
       overrides?: CallOverrides
-    ): Promise<[string[]]>;
+    ): Promise<[string]>;
+
+    setAssetEthFeed(
+      _asset: string,
+      _feed: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    "setAssetEthFeed(address,address)"(
+      _asset: string,
+      _feed: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
   };
 
-  getBestPoolsWithLimit(
-    fromToken: string,
-    destToken: string,
-    limit: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<string[]>;
+  assetEthFeed(arg0: string, overrides?: CallOverrides): Promise<string>;
 
-  "getBestPoolsWithLimit(address,address,uint256)"(
-    fromToken: string,
-    destToken: string,
-    limit: BigNumberish,
+  "assetEthFeed(address)"(
+    arg0: string,
     overrides?: CallOverrides
-  ): Promise<string[]>;
+  ): Promise<string>;
+
+  setAssetEthFeed(
+    _asset: string,
+    _feed: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  "setAssetEthFeed(address,address)"(
+    _asset: string,
+    _feed: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
   callStatic: {
-    getBestPoolsWithLimit(
-      fromToken: string,
-      destToken: string,
-      limit: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<string[]>;
+    assetEthFeed(arg0: string, overrides?: CallOverrides): Promise<string>;
 
-    "getBestPoolsWithLimit(address,address,uint256)"(
-      fromToken: string,
-      destToken: string,
-      limit: BigNumberish,
+    "assetEthFeed(address)"(
+      arg0: string,
       overrides?: CallOverrides
-    ): Promise<string[]>;
+    ): Promise<string>;
+
+    setAssetEthFeed(
+      _asset: string,
+      _feed: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "setAssetEthFeed(address,address)"(
+      _asset: string,
+      _feed: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
   };
 
   filters: {};
 
   estimateGas: {
-    getBestPoolsWithLimit(
-      fromToken: string,
-      destToken: string,
-      limit: BigNumberish,
+    assetEthFeed(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+    "assetEthFeed(address)"(
+      arg0: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    "getBestPoolsWithLimit(address,address,uint256)"(
-      fromToken: string,
-      destToken: string,
-      limit: BigNumberish,
-      overrides?: CallOverrides
+    setAssetEthFeed(
+      _asset: string,
+      _feed: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    "setAssetEthFeed(address,address)"(
+      _asset: string,
+      _feed: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
   };
 
   populateTransaction: {
-    getBestPoolsWithLimit(
-      fromToken: string,
-      destToken: string,
-      limit: BigNumberish,
+    assetEthFeed(
+      arg0: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    "getBestPoolsWithLimit(address,address,uint256)"(
-      fromToken: string,
-      destToken: string,
-      limit: BigNumberish,
+    "assetEthFeed(address)"(
+      arg0: string,
       overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    setAssetEthFeed(
+      _asset: string,
+      _feed: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "setAssetEthFeed(address,address)"(
+      _asset: string,
+      _feed: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
   };
 }

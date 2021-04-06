@@ -18,25 +18,34 @@ import { Listener, Provider } from "@ethersproject/providers";
 import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
 import { TypedEventFilter, TypedEvent, TypedListener } from "./commons";
 
-interface IBRegistryInterface extends ethers.utils.Interface {
+interface XTokenWrapperMockInterface extends ethers.utils.Interface {
   functions: {
-    "getBestPoolsWithLimit(address,address,uint256)": FunctionFragment;
+    "ETH_TOKEN_ADDRESS()": FunctionFragment;
+    "tokenToXToken(address)": FunctionFragment;
   };
 
   encodeFunctionData(
-    functionFragment: "getBestPoolsWithLimit",
-    values: [string, string, BigNumberish]
+    functionFragment: "ETH_TOKEN_ADDRESS",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "tokenToXToken",
+    values: [string]
   ): string;
 
   decodeFunctionResult(
-    functionFragment: "getBestPoolsWithLimit",
+    functionFragment: "ETH_TOKEN_ADDRESS",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "tokenToXToken",
     data: BytesLike
   ): Result;
 
   events: {};
 }
 
-export class IBRegistry extends Contract {
+export class XTokenWrapperMock extends Contract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
@@ -77,84 +86,74 @@ export class IBRegistry extends Contract {
     toBlock?: string | number | undefined
   ): Promise<Array<TypedEvent<EventArgsArray & EventArgsObject>>>;
 
-  interface: IBRegistryInterface;
+  interface: XTokenWrapperMockInterface;
 
   functions: {
-    getBestPoolsWithLimit(
-      fromToken: string,
-      destToken: string,
-      limit: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[string[]]>;
+    ETH_TOKEN_ADDRESS(overrides?: CallOverrides): Promise<[string]>;
 
-    "getBestPoolsWithLimit(address,address,uint256)"(
-      fromToken: string,
-      destToken: string,
-      limit: BigNumberish,
+    "ETH_TOKEN_ADDRESS()"(overrides?: CallOverrides): Promise<[string]>;
+
+    tokenToXToken(arg0: string, overrides?: CallOverrides): Promise<[string]>;
+
+    "tokenToXToken(address)"(
+      arg0: string,
       overrides?: CallOverrides
-    ): Promise<[string[]]>;
+    ): Promise<[string]>;
   };
 
-  getBestPoolsWithLimit(
-    fromToken: string,
-    destToken: string,
-    limit: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<string[]>;
+  ETH_TOKEN_ADDRESS(overrides?: CallOverrides): Promise<string>;
 
-  "getBestPoolsWithLimit(address,address,uint256)"(
-    fromToken: string,
-    destToken: string,
-    limit: BigNumberish,
+  "ETH_TOKEN_ADDRESS()"(overrides?: CallOverrides): Promise<string>;
+
+  tokenToXToken(arg0: string, overrides?: CallOverrides): Promise<string>;
+
+  "tokenToXToken(address)"(
+    arg0: string,
     overrides?: CallOverrides
-  ): Promise<string[]>;
+  ): Promise<string>;
 
   callStatic: {
-    getBestPoolsWithLimit(
-      fromToken: string,
-      destToken: string,
-      limit: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<string[]>;
+    ETH_TOKEN_ADDRESS(overrides?: CallOverrides): Promise<string>;
 
-    "getBestPoolsWithLimit(address,address,uint256)"(
-      fromToken: string,
-      destToken: string,
-      limit: BigNumberish,
+    "ETH_TOKEN_ADDRESS()"(overrides?: CallOverrides): Promise<string>;
+
+    tokenToXToken(arg0: string, overrides?: CallOverrides): Promise<string>;
+
+    "tokenToXToken(address)"(
+      arg0: string,
       overrides?: CallOverrides
-    ): Promise<string[]>;
+    ): Promise<string>;
   };
 
   filters: {};
 
   estimateGas: {
-    getBestPoolsWithLimit(
-      fromToken: string,
-      destToken: string,
-      limit: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    ETH_TOKEN_ADDRESS(overrides?: CallOverrides): Promise<BigNumber>;
 
-    "getBestPoolsWithLimit(address,address,uint256)"(
-      fromToken: string,
-      destToken: string,
-      limit: BigNumberish,
+    "ETH_TOKEN_ADDRESS()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    tokenToXToken(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+    "tokenToXToken(address)"(
+      arg0: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
   };
 
   populateTransaction: {
-    getBestPoolsWithLimit(
-      fromToken: string,
-      destToken: string,
-      limit: BigNumberish,
+    ETH_TOKEN_ADDRESS(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "ETH_TOKEN_ADDRESS()"(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    "getBestPoolsWithLimit(address,address,uint256)"(
-      fromToken: string,
-      destToken: string,
-      limit: BigNumberish,
+    tokenToXToken(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "tokenToXToken(address)"(
+      arg0: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
   };
