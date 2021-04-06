@@ -38,10 +38,9 @@ contract SmtVesting is Ownable {
      * Sets ownership to the given `_owner`.
      *
      */
-    constructor(address _owner) {
+    constructor() {
         initialBlock = block.number;
         lastClaimedBlock = block.number;
-        transferOwnership(_owner);
     }
 
     /**

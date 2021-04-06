@@ -78,7 +78,7 @@
 <text text-anchor="start" x="287.3433" y="-193.5" font-family="Times,serif" font-size="14.00" fill="#000000"> &#160;&#160;&#160;claim()</text>
 <text text-anchor="start" x="287.3433" y="-176.7" font-family="Times,serif" font-size="14.00" fill="#000000">Public:</text>
 <text text-anchor="start" x="287.3433" y="-159.9" font-family="Times,serif" font-size="14.00" fill="#000000"> &#160;&#160;&#160;&lt;&lt;event&gt;&gt; Claim(owner: address, amount: uint256)</text>
-<text text-anchor="start" x="287.3433" y="-143.1" font-family="Times,serif" font-size="14.00" fill="#000000"> &#160;&#160;&#160;constructor(_owner: address)</text>
+<text text-anchor="start" x="287.3433" y="-143.1" font-family="Times,serif" font-size="14.00" fill="#000000"> &#160;&#160;&#160;constructor()</text>
 <text text-anchor="start" x="287.3433" y="-126.3" font-family="Times,serif" font-size="14.00" fill="#000000"> &#160;&#160;&#160;claimableAmount(): uint256</text>
 <text text-anchor="start" x="287.3433" y="-109.5" font-family="Times,serif" font-size="14.00" fill="#000000"> &#160;&#160;&#160;accumulateAnualComBatch(isFirstYCBClaimed: bool, blockNumber: uint256, lCBlock: uint256): uint256</text>
 <text text-anchor="start" x="287.3433" y="-92.7" font-family="Times,serif" font-size="14.00" fill="#000000"> &#160;&#160;&#160;accumulateFromPastYears(blockNumber: uint256, lCBlock: uint256): uint256</text>

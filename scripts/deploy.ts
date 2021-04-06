@@ -30,7 +30,7 @@ async function main(): Promise<void> {
   if (process.env.TREASURY_ACCOUNT) {
     startLog('Deploying SmtVesting contract');
     const SmtVestingFactory: ContractFactory = await ethers.getContractFactory('SmtVesting');
-    const SmtVestingContract: SmtVesting = (await SmtVestingFactory.deploy(process.env.TREASURY_ACCOUNT)) as SmtVesting;
+    const SmtVestingContract: SmtVesting = (await SmtVestingFactory.deploy()) as SmtVesting;
     updatetLog(`Deploying SmtVesting contract - txHash: ${SmtVestingContract.deployTransaction.hash}`);
     await SmtVestingContract.deployed();
 
@@ -99,6 +99,13 @@ async function main(): Promise<void> {
     updatetLog(`Setting SmtVesting token - txHash: ${piaTx.hash}`);
     await piaTx.wait();
     stopLog(`Done setting SmtVesting token - txHash: ${piaTx.hash}`);
+
+    // Transfer SmtVesting ownership
+    startLog('Transfer SmtVesting ownership to TREASURY_ACCOUNT');
+    const toTx = await SmtVestingContract.transferOwnership(process.env.TREASURY_ACCOUNT);
+    updatetLog(`Transfer SmtVesting ownership to TREASURY_ACCOUNT - txHash: ${toTx.hash}`);
+    await toTx.wait();
+    stopLog(`Done Transfer SmtVesting ownership to TREASURY_ACCOUNT - txHash: ${toTx.hash}`);
   }
 }
 

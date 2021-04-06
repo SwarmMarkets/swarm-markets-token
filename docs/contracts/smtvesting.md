@@ -2,7 +2,7 @@
 
 ## Functions:
 
-- `constructor(address _owner) (public)`
+- `constructor() (public)`
 
 - `setToken(address _token) (external)`
 
@@ -48,7 +48,7 @@
 
 - `Claim(address owner, uint256 amount)`
 
-### Function `constructor(address _owner) public`
+### Function `constructor() public`
 
 Sets the value for {initialBloc}.
 

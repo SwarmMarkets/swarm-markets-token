@@ -14,15 +14,12 @@ import Time from './utils/time';
 
 let deployer: Signer;
 let kakaroto: Signer;
-let vegeta: Signer;
 
 let deployerAddress: string;
 let kakarotoAddress: string;
-let vegetaAddress: string;
 
 let smtVesting: SmtVestingWithSetters;
 let smtVestingKakaroto: SmtVestingWithSetters;
-let smtVestingVegeta: SmtVestingWithSetters;
 let smt: SwarmMarketsToken;
 
 const getData = (): Promise<any> => {
@@ -46,18 +43,17 @@ describe('SmtVesting contract', function () {
   const time = new Time();
 
   before(async () => {
-    [deployer, kakaroto, vegeta] = await ethers.getSigners();
-    [deployerAddress, kakarotoAddress, vegetaAddress] = await Promise.all([deployer.getAddress(), kakaroto.getAddress(), vegeta.getAddress()]);
+    [deployer, kakaroto] = await ethers.getSigners();
+    [deployerAddress, kakarotoAddress] = await Promise.all([deployer.getAddress(), kakaroto.getAddress()]);
 
     const SmtVestingFactory = await ethers.getContractFactory('SmtVestingWithSetters');
 
-    smtVesting = (await SmtVestingFactory.deploy(vegetaAddress)) as SmtVestingWithSetters;
+    smtVesting = (await SmtVestingFactory.deploy()) as SmtVestingWithSetters;
     await smtVesting.deployed();
 
     initialBlock = (await smtVesting.initialBlock()).toNumber();
 
     smtVestingKakaroto = smtVesting.connect(kakaroto);
-    smtVestingVegeta = smtVesting.connect(vegeta);
 
     const SwarmMarketsTokenFactory = await ethers.getContractFactory('SwarmMarketsToken');
 
@@ -69,20 +65,20 @@ describe('SmtVesting contract', function () {
 
   describe('setToken', () => {
     it('non owner should not be able to set token', async () => {
-      await expect(smtVesting.setToken(smt.address)).to.be.revertedWith('Ownable: caller is not the owner');
+      await expect(smtVestingKakaroto.setToken(smt.address)).to.be.revertedWith('Ownable: caller is not the owner');
     });
 
     it('owner should not be able to set token as zero address', async () => {
-      await expect(smtVestingVegeta.setToken(ethers.constants.AddressZero)).to.be.revertedWith('token is the zero address');
+      await expect(smtVesting.setToken(ethers.constants.AddressZero)).to.be.revertedWith('token is the zero address');
     });
 
     it('owner should be able to set token', async () => {
-      await smtVestingVegeta.setToken(smt.address);
-      expect(await smtVestingVegeta.token()).to.eq(smt.address);
+      await smtVesting.setToken(smt.address);
+      expect(await smtVesting.token()).to.eq(smt.address);
     });
 
     it('owner should not be able to set token twice', async () => {
-      await expect(smtVestingVegeta.setToken(kakarotoAddress)).to.be.revertedWith('token is already set');
+      await expect(smtVesting.setToken(kakarotoAddress)).to.be.revertedWith('token is already set');
     });
   });
 
@@ -102,7 +98,7 @@ describe('SmtVesting contract', function () {
           const blockNumber = initialBlock + 2102400 * i;
           const lastClaimedBlock = initialBlock + 2102399 * i;
 
-          const accumulateAnualComBatch = await smtVestingVegeta.accumulateAnualComBatch(
+          const accumulateAnualComBatch = await smtVesting.accumulateAnualComBatch(
             isFirstYCBClaimed,
             blockNumber,
             lastClaimedBlock,
@@ -118,7 +114,7 @@ describe('SmtVesting contract', function () {
           const blockNumber = 40320 + 2102400 * i;
           const lastClaimedBlock = 40319 + 2102400 * i;
 
-          const accumulateAnualComBatch = await smtVestingVegeta.accumulateAnualComBatch(
+          const accumulateAnualComBatch = await smtVesting.accumulateAnualComBatch(
             isFirstYCBClaimed,
             blockNumber,
             lastClaimedBlock,
@@ -138,7 +134,7 @@ describe('SmtVesting contract', function () {
         acc = acc.add(ethers.utils.parseEther(data[7]['AnualCommunityBatch']));
         acc = acc.add(ethers.utils.parseEther(data[8]['AnualCommunityBatch']));
 
-        const accumulateAnualComBatch = await smtVestingVegeta.accumulateAnualComBatch(
+        const accumulateAnualComBatch = await smtVesting.accumulateAnualComBatch(
           true,
           2102400 * 8 + initialBlock,
           initialBlock,
@@ -157,7 +153,7 @@ describe('SmtVesting contract', function () {
             const blockNumber = initialBlock + 2102400 * y + 40320 * w;
             const lastClaimedBlock = blockNumber - 40320;
 
-            const accumulateCurrentYear = await smtVestingVegeta.accumulateCurrentYear(blockNumber, lastClaimedBlock);
+            const accumulateCurrentYear = await smtVesting.accumulateCurrentYear(blockNumber, lastClaimedBlock);
             expect(ethers.utils.formatUnits(accumulateCurrentYear)).to.eq(row[`W${w}`]);
           }
         }
@@ -171,7 +167,7 @@ describe('SmtVesting contract', function () {
             const blockNumber = initialBlock + 2102400 * y + 40320 * w - 20160;
             const lastClaimedBlock = y === 0 && w === 1 ? initialBlock : blockNumber - 40320;
 
-            const accumulateCurrentYear = await smtVestingVegeta.accumulateCurrentYear(blockNumber, lastClaimedBlock);
+            const accumulateCurrentYear = await smtVesting.accumulateCurrentYear(blockNumber, lastClaimedBlock);
             let expected = ethers.utils.parseEther(row[`W${w}`]).mul(20160).div(40320);
 
             expected =
@@ -194,7 +190,7 @@ describe('SmtVesting contract', function () {
       it('should get the right value accumulating from a past year', async () => {
         const blockNumber = initialBlock + 2102400 + 40320 * 2; //(Y2 W3)
         const lastClaimedBlock = initialBlock + 40320 * 2; // Y1 W2
-        const accumulateFromPastYears = await smtVestingVegeta.accumulateFromPastYears(blockNumber, lastClaimedBlock);
+        const accumulateFromPastYears = await smtVesting.accumulateFromPastYears(blockNumber, lastClaimedBlock);
 
         let acc = ethers.utils.parseEther(data[0]['W3']);
         for (let w = 4; w < 53; w++) {
@@ -209,7 +205,7 @@ describe('SmtVesting contract', function () {
       it('should get the right value accumulating from a past year half of week', async () => {
         const blockNumber = initialBlock + 2102400 + 40320 * 2 + 20160; //(Y2 W3)
         const lastClaimedBlock = initialBlock + 40320 * 2 + 20160; // Y1 W2
-        const accumulateFromPastYears = await smtVestingVegeta.accumulateFromPastYears(blockNumber, lastClaimedBlock);
+        const accumulateFromPastYears = await smtVesting.accumulateFromPastYears(blockNumber, lastClaimedBlock);
 
         let acc = ethers.utils.parseEther(data[0]['W3']).mul(20160).div(40320);
         for (let w = 4; w < 53; w++) {
@@ -233,7 +229,7 @@ describe('SmtVesting contract', function () {
           for (let w = 0; w < 52; w++) {
             const blockNumber = initialBlock + 2102400 * y + 40320 * w;
 
-            const accumulateCurrentYear = await smtVestingVegeta['claimableAmount(bool,uint256,uint256)'](
+            const accumulateCurrentYear = await smtVesting['claimableAmount(bool,uint256,uint256)'](
               firstYCBClaimed,
               blockNumber,
               lastClaimedBlock,
@@ -266,7 +262,7 @@ describe('SmtVesting contract', function () {
           for (let w = 0; w < 52; w += 4) {
             const blockNumber = initialBlock + 2102400 * y + 40320 * w;
 
-            const accumulateCurrentYear = await smtVestingVegeta['claimableAmount(bool,uint256,uint256)'](
+            const accumulateCurrentYear = await smtVesting['claimableAmount(bool,uint256,uint256)'](
               firstYCBClaimed,
               blockNumber,
               lastClaimedBlock,
@@ -302,17 +298,13 @@ describe('SmtVesting contract', function () {
       before(async () => {
         await reverter.revert();
 
-        await smtVestingVegeta.setToken(smt.address);
+        await smtVesting.setToken(smt.address);
 
         await reverter.snapshot();
       });
 
       beforeEach(async () => {
         await reverter.revert();
-      });
-
-      it('non owner should not be able to claim', async () => {
-        await expect(smtVestingKakaroto['claim()']()).to.be.revertedWith('Ownable: caller is not the owner');
       });
 
       it('should get the right value week after week ', async () => {
@@ -322,10 +314,10 @@ describe('SmtVesting contract', function () {
           for (let w = 0; w < 52; w++) {
             const blockNumber = initialBlock + 2102400 * y + 40320 * w;
 
-            const initialVetingBalance = await smt.balanceOf(smtVestingVegeta.address);
-            const initialOwnerBalance = await smt.balanceOf(vegetaAddress);
+            const initialVetingBalance = await smt.balanceOf(smtVesting.address);
+            const initialOwnerBalance = await smt.balanceOf(deployerAddress);
 
-            await smtVestingVegeta['claim(uint256)'](blockNumber);
+            await smtVesting['claim(uint256)'](blockNumber);
 
             let amount = ethers.BigNumber.from(0);
             if (w === 0) {
@@ -337,11 +329,11 @@ describe('SmtVesting contract', function () {
               amount = ethers.utils.parseEther(row[`W${w}`]);
             }
 
-            expect(await smt.balanceOf(smtVestingVegeta.address)).to.eq(initialVetingBalance.sub(amount));
-            expect(await smt.balanceOf(vegetaAddress)).to.eq(initialOwnerBalance.add(amount));
+            expect(await smt.balanceOf(smtVesting.address)).to.eq(initialVetingBalance.sub(amount));
+            expect(await smt.balanceOf(deployerAddress)).to.eq(initialOwnerBalance.add(amount));
 
-            expect(await smtVestingVegeta.lastClaimedBlock()).to.eq(blockNumber);
-            expect(await smtVestingVegeta.firstYCBClaimed()).to.eq(true);
+            expect(await smtVesting.lastClaimedBlock()).to.eq(blockNumber);
+            expect(await smtVesting.firstYCBClaimed()).to.eq(true);
           }
         }
       });
@@ -352,10 +344,10 @@ describe('SmtVesting contract', function () {
           for (let w = 0; w < 52; w += 4) {
             const blockNumber = initialBlock + 2102400 * y + 40320 * w;
 
-            const initialVetingBalance = await smt.balanceOf(smtVestingVegeta.address);
-            const initialOwnerBalance = await smt.balanceOf(vegetaAddress);
+            const initialVetingBalance = await smt.balanceOf(smtVesting.address);
+            const initialOwnerBalance = await smt.balanceOf(deployerAddress);
 
-            await smtVestingVegeta['claim(uint256)'](blockNumber);
+            await smtVesting['claim(uint256)'](blockNumber);
 
             let amount = ethers.BigNumber.from(0);
             if (w === 0) {
@@ -373,34 +365,34 @@ describe('SmtVesting contract', function () {
               amount = amount.add(ethers.utils.parseEther(row[`W${w - 3}`]));
             }
 
-            expect(await smt.balanceOf(smtVestingVegeta.address)).to.eq(initialVetingBalance.sub(amount));
-            expect(await smt.balanceOf(vegetaAddress)).to.eq(initialOwnerBalance.add(amount));
+            expect(await smt.balanceOf(smtVesting.address)).to.eq(initialVetingBalance.sub(amount));
+            expect(await smt.balanceOf(deployerAddress)).to.eq(initialOwnerBalance.add(amount));
 
-            expect(await smtVestingVegeta.lastClaimedBlock()).to.eq(blockNumber);
-            expect(await smtVestingVegeta.firstYCBClaimed()).to.eq(true);
+            expect(await smtVesting.lastClaimedBlock()).to.eq(blockNumber);
+            expect(await smtVesting.firstYCBClaimed()).to.eq(true);
           }
         }
       });
 
       it('should claim some amount and transfer to the owner', async () => {
         await time.advanceBlockTo(20160);
-        // const claimableAmount = await smtVestingVegeta['claimableAmount()']()
-        const initialVetingBalance = await smt.balanceOf(smtVestingVegeta.address);
-        const initialOwnerBalance = await smt.balanceOf(vegetaAddress);
+        // const claimableAmount = await smtVesting['claimableAmount()']()
+        const initialVetingBalance = await smt.balanceOf(smtVesting.address);
+        const initialOwnerBalance = await smt.balanceOf(deployerAddress);
 
-        expect(await smtVestingVegeta.lastClaimedBlock()).to.eq(initialBlock);
-        expect(await smtVestingVegeta.firstYCBClaimed()).to.eq(false);
+        expect(await smtVesting.lastClaimedBlock()).to.eq(initialBlock);
+        expect(await smtVesting.firstYCBClaimed()).to.eq(false);
 
-        const receipt = await (await smtVestingVegeta['claim()']()).wait();
+        const receipt = await (await smtVesting['claim()']()).wait();
 
         const claimEvent = receipt.events?.find((log: any) => log.event && log.event === 'Claim');
         const amount = (claimEvent && claimEvent.args ? claimEvent.args.amount : '') as string;
 
-        expect(await smt.balanceOf(smtVestingVegeta.address)).to.eq(initialVetingBalance.sub(amount));
-        expect(await smt.balanceOf(vegetaAddress)).to.eq(initialOwnerBalance.add(amount));
+        expect(await smt.balanceOf(smtVesting.address)).to.eq(initialVetingBalance.sub(amount));
+        expect(await smt.balanceOf(deployerAddress)).to.eq(initialOwnerBalance.add(amount));
 
-        expect(await smtVestingVegeta.lastClaimedBlock()).to.eq(20161);
-        expect(await smtVestingVegeta.firstYCBClaimed()).to.eq(true);
+        expect(await smtVesting.lastClaimedBlock()).to.eq(20161);
+        expect(await smtVesting.firstYCBClaimed()).to.eq(true);
       });
     });
   });

@@ -24,7 +24,7 @@ async function main(): Promise<void> {
     // SmtVesting
     await hre.run('verify:verify', {
       address: deploymentData.SmtVesting.address,
-      constructorArguments: [process.env.TREASURY_ACCOUNT],
+      constructorArguments: [],
     });
 
     // SmtDistributor
