@@ -5,9 +5,7 @@ import assert from 'assert';
 
 import { getChainId, networkNames } from '@openzeppelin/upgrades-core';
 
-const requiredConfigs = [
-  'TREASURY_ACCOUNT',
-];
+const requiredConfigs = ['TREASURY_ACCOUNT'];
 requiredConfigs.forEach(conf => assert(process.env[conf], `Missing configuration variable: ${conf}`));
 
 async function main(): Promise<void> {

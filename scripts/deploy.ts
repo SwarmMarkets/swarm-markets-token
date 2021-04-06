@@ -16,9 +16,7 @@ import SmtVestingArtifact from '../artifacts/contracts/SmtVesting.sol/SmtVesting
 
 let spinner: Ora;
 
-const requiredConfigs = [
-  'TREASURY_ACCOUNT',
-];
+const requiredConfigs = ['TREASURY_ACCOUNT'];
 requiredConfigs.forEach(conf => assert(process.env[conf], `Missing configuration variable: ${conf}`));
 
 async function main(): Promise<void> {
@@ -74,7 +72,7 @@ async function main(): Promise<void> {
     const SmtDistributorFactory: ContractFactory = await ethers.getContractFactory('SmtDistributor');
     const SmtDistributorContract: SmtDistributor = (await SmtDistributorFactory.deploy(
       deploymentData.SwarmMarketsToken.address,
-      process.env.TREASURY_ACCOUNT
+      process.env.TREASURY_ACCOUNT,
     )) as SmtDistributor;
     updatetLog(`Deploying SmtDistributor contract - txHash: ${SmtDistributorContract.deployTransaction.hash}`);
     await SmtDistributorContract.deployed();

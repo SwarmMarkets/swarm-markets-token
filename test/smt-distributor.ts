@@ -46,7 +46,10 @@ describe('SmtDistributor contract', function () {
   });
 
   it('should be able to deploy with non zero address for token', async () => {
-    smtDisctributorContract = (await SmtDistributorFactory.deploy(SMTContract.address, deployerAddress)) as SmtDistributor;
+    smtDisctributorContract = (await SmtDistributorFactory.deploy(
+      SMTContract.address,
+      deployerAddress,
+    )) as SmtDistributor;
     await smtDisctributorContract.deployed();
 
     smtDisctributorContractKakaroto = smtDisctributorContract.connect(kakaroto);
