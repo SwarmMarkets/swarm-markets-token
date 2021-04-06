@@ -5,14 +5,14 @@
 import { Contract, Signer } from "ethers";
 import { Provider } from "@ethersproject/providers";
 
-import type { IEurPriceFeed } from "../IEurPriceFeed";
+import type { IERC165 } from "../IERC165";
 
-export class IEurPriceFeed__factory {
+export class IERC165__factory {
   static connect(
     address: string,
     signerOrProvider: Signer | Provider
-  ): IEurPriceFeed {
-    return new Contract(address, _abi, signerOrProvider) as IEurPriceFeed;
+  ): IERC165 {
+    return new Contract(address, _abi, signerOrProvider) as IERC165;
   }
 }
 
@@ -20,17 +20,17 @@ const _abi = [
   {
     inputs: [
       {
-        internalType: "address",
-        name: "_asset",
-        type: "address",
+        internalType: "bytes4",
+        name: "interfaceId",
+        type: "bytes4",
       },
     ],
-    name: "assetEthFeed",
+    name: "supportsInterface",
     outputs: [
       {
-        internalType: "address",
+        internalType: "bool",
         name: "",
-        type: "address",
+        type: "bool",
       },
     ],
     stateMutability: "view",

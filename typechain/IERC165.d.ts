@@ -18,25 +18,25 @@ import { Listener, Provider } from "@ethersproject/providers";
 import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
 import { TypedEventFilter, TypedEvent, TypedListener } from "./commons";
 
-interface IEurPriceFeedInterface extends ethers.utils.Interface {
+interface IERC165Interface extends ethers.utils.Interface {
   functions: {
-    "assetEthFeed(address)": FunctionFragment;
+    "supportsInterface(bytes4)": FunctionFragment;
   };
 
   encodeFunctionData(
-    functionFragment: "assetEthFeed",
-    values: [string]
+    functionFragment: "supportsInterface",
+    values: [BytesLike]
   ): string;
 
   decodeFunctionResult(
-    functionFragment: "assetEthFeed",
+    functionFragment: "supportsInterface",
     data: BytesLike
   ): Result;
 
   events: {};
 }
 
-export class IEurPriceFeed extends Contract {
+export class IERC165 extends Contract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
@@ -77,52 +77,64 @@ export class IEurPriceFeed extends Contract {
     toBlock?: string | number | undefined
   ): Promise<Array<TypedEvent<EventArgsArray & EventArgsObject>>>;
 
-  interface: IEurPriceFeedInterface;
+  interface: IERC165Interface;
 
   functions: {
-    assetEthFeed(_asset: string, overrides?: CallOverrides): Promise<[string]>;
-
-    "assetEthFeed(address)"(
-      _asset: string,
+    supportsInterface(
+      interfaceId: BytesLike,
       overrides?: CallOverrides
-    ): Promise<[string]>;
+    ): Promise<[boolean]>;
+
+    "supportsInterface(bytes4)"(
+      interfaceId: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
   };
 
-  assetEthFeed(_asset: string, overrides?: CallOverrides): Promise<string>;
-
-  "assetEthFeed(address)"(
-    _asset: string,
+  supportsInterface(
+    interfaceId: BytesLike,
     overrides?: CallOverrides
-  ): Promise<string>;
+  ): Promise<boolean>;
+
+  "supportsInterface(bytes4)"(
+    interfaceId: BytesLike,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
 
   callStatic: {
-    assetEthFeed(_asset: string, overrides?: CallOverrides): Promise<string>;
-
-    "assetEthFeed(address)"(
-      _asset: string,
+    supportsInterface(
+      interfaceId: BytesLike,
       overrides?: CallOverrides
-    ): Promise<string>;
+    ): Promise<boolean>;
+
+    "supportsInterface(bytes4)"(
+      interfaceId: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
   };
 
   filters: {};
 
   estimateGas: {
-    assetEthFeed(_asset: string, overrides?: CallOverrides): Promise<BigNumber>;
+    supportsInterface(
+      interfaceId: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
-    "assetEthFeed(address)"(
-      _asset: string,
+    "supportsInterface(bytes4)"(
+      interfaceId: BytesLike,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
   };
 
   populateTransaction: {
-    assetEthFeed(
-      _asset: string,
+    supportsInterface(
+      interfaceId: BytesLike,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    "assetEthFeed(address)"(
-      _asset: string,
+    "supportsInterface(bytes4)"(
+      interfaceId: BytesLike,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
   };

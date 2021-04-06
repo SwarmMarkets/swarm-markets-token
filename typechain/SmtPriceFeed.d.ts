@@ -21,6 +21,9 @@ import { TypedEventFilter, TypedEvent, TypedListener } from "./commons";
 
 interface SmtPriceFeedInterface extends ethers.utils.Interface {
   functions: {
+    "ETH_TOKEN_ADDRESS()": FunctionFragment;
+    "ONE()": FunctionFragment;
+    "calculateAmount(address,uint256)": FunctionFragment;
     "eurPriceFeed()": FunctionFragment;
     "owner()": FunctionFragment;
     "registry()": FunctionFragment;
@@ -28,10 +31,21 @@ interface SmtPriceFeedInterface extends ethers.utils.Interface {
     "setEurPriceFeed(address)": FunctionFragment;
     "setRegistry(address)": FunctionFragment;
     "setSmt(address)": FunctionFragment;
+    "setXTokenWrapper(address)": FunctionFragment;
     "smt()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
+    "xTokenWrapper()": FunctionFragment;
   };
 
+  encodeFunctionData(
+    functionFragment: "ETH_TOKEN_ADDRESS",
+    values?: undefined
+  ): string;
+  encodeFunctionData(functionFragment: "ONE", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "calculateAmount",
+    values: [string, BigNumberish]
+  ): string;
   encodeFunctionData(
     functionFragment: "eurPriceFeed",
     values?: undefined
@@ -48,12 +62,29 @@ interface SmtPriceFeedInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "setRegistry", values: [string]): string;
   encodeFunctionData(functionFragment: "setSmt", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "setXTokenWrapper",
+    values: [string]
+  ): string;
   encodeFunctionData(functionFragment: "smt", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "transferOwnership",
     values: [string]
   ): string;
+  encodeFunctionData(
+    functionFragment: "xTokenWrapper",
+    values?: undefined
+  ): string;
 
+  decodeFunctionResult(
+    functionFragment: "ETH_TOKEN_ADDRESS",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "ONE", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "calculateAmount",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "eurPriceFeed",
     data: BytesLike
@@ -73,9 +104,17 @@ interface SmtPriceFeedInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "setSmt", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "setXTokenWrapper",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "smt", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "transferOwnership",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "xTokenWrapper",
     data: BytesLike
   ): Result;
 
@@ -84,12 +123,14 @@ interface SmtPriceFeedInterface extends ethers.utils.Interface {
     "OwnershipTransferred(address,address)": EventFragment;
     "RegistrySet(address)": EventFragment;
     "SmtSet(address)": EventFragment;
+    "XTokenWrapperSet(address)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "EurPriceFeedSet"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RegistrySet"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "SmtSet"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "XTokenWrapperSet"): EventFragment;
 }
 
 export class SmtPriceFeed extends Contract {
@@ -136,6 +177,26 @@ export class SmtPriceFeed extends Contract {
   interface: SmtPriceFeedInterface;
 
   functions: {
+    ETH_TOKEN_ADDRESS(overrides?: CallOverrides): Promise<[string]>;
+
+    "ETH_TOKEN_ADDRESS()"(overrides?: CallOverrides): Promise<[string]>;
+
+    ONE(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    "ONE()"(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    calculateAmount(
+      _asset: string,
+      _tokenAmountIn: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    "calculateAmount(address,uint256)"(
+      _asset: string,
+      _tokenAmountIn: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
     eurPriceFeed(overrides?: CallOverrides): Promise<[string]>;
 
     "eurPriceFeed()"(overrides?: CallOverrides): Promise<[string]>;
@@ -186,6 +247,16 @@ export class SmtPriceFeed extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    setXTokenWrapper(
+      _xTokenWrapper: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    "setXTokenWrapper(address)"(
+      _xTokenWrapper: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     smt(overrides?: CallOverrides): Promise<[string]>;
 
     "smt()"(overrides?: CallOverrides): Promise<[string]>;
@@ -199,7 +270,31 @@ export class SmtPriceFeed extends Contract {
       newOwner: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
+
+    xTokenWrapper(overrides?: CallOverrides): Promise<[string]>;
+
+    "xTokenWrapper()"(overrides?: CallOverrides): Promise<[string]>;
   };
+
+  ETH_TOKEN_ADDRESS(overrides?: CallOverrides): Promise<string>;
+
+  "ETH_TOKEN_ADDRESS()"(overrides?: CallOverrides): Promise<string>;
+
+  ONE(overrides?: CallOverrides): Promise<BigNumber>;
+
+  "ONE()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+  calculateAmount(
+    _asset: string,
+    _tokenAmountIn: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  "calculateAmount(address,uint256)"(
+    _asset: string,
+    _tokenAmountIn: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
 
   eurPriceFeed(overrides?: CallOverrides): Promise<string>;
 
@@ -251,6 +346,16 @@ export class SmtPriceFeed extends Contract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  setXTokenWrapper(
+    _xTokenWrapper: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  "setXTokenWrapper(address)"(
+    _xTokenWrapper: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   smt(overrides?: CallOverrides): Promise<string>;
 
   "smt()"(overrides?: CallOverrides): Promise<string>;
@@ -265,7 +370,31 @@ export class SmtPriceFeed extends Contract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  xTokenWrapper(overrides?: CallOverrides): Promise<string>;
+
+  "xTokenWrapper()"(overrides?: CallOverrides): Promise<string>;
+
   callStatic: {
+    ETH_TOKEN_ADDRESS(overrides?: CallOverrides): Promise<string>;
+
+    "ETH_TOKEN_ADDRESS()"(overrides?: CallOverrides): Promise<string>;
+
+    ONE(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "ONE()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    calculateAmount(
+      _asset: string,
+      _tokenAmountIn: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "calculateAmount(address,uint256)"(
+      _asset: string,
+      _tokenAmountIn: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     eurPriceFeed(overrides?: CallOverrides): Promise<string>;
 
     "eurPriceFeed()"(overrides?: CallOverrides): Promise<string>;
@@ -303,6 +432,16 @@ export class SmtPriceFeed extends Contract {
 
     "setSmt(address)"(_smt: string, overrides?: CallOverrides): Promise<void>;
 
+    setXTokenWrapper(
+      _xTokenWrapper: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "setXTokenWrapper(address)"(
+      _xTokenWrapper: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     smt(overrides?: CallOverrides): Promise<string>;
 
     "smt()"(overrides?: CallOverrides): Promise<string>;
@@ -316,6 +455,10 @@ export class SmtPriceFeed extends Contract {
       newOwner: string,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    xTokenWrapper(overrides?: CallOverrides): Promise<string>;
+
+    "xTokenWrapper()"(overrides?: CallOverrides): Promise<string>;
   };
 
   filters: {
@@ -336,9 +479,33 @@ export class SmtPriceFeed extends Contract {
     ): TypedEventFilter<[string], { registry: string }>;
 
     SmtSet(smt: null): TypedEventFilter<[string], { smt: string }>;
+
+    XTokenWrapperSet(
+      xTokenWrapper: null
+    ): TypedEventFilter<[string], { xTokenWrapper: string }>;
   };
 
   estimateGas: {
+    ETH_TOKEN_ADDRESS(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "ETH_TOKEN_ADDRESS()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    ONE(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "ONE()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    calculateAmount(
+      _asset: string,
+      _tokenAmountIn: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "calculateAmount(address,uint256)"(
+      _asset: string,
+      _tokenAmountIn: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     eurPriceFeed(overrides?: CallOverrides): Promise<BigNumber>;
 
     "eurPriceFeed()"(overrides?: CallOverrides): Promise<BigNumber>;
@@ -389,6 +556,16 @@ export class SmtPriceFeed extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    setXTokenWrapper(
+      _xTokenWrapper: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    "setXTokenWrapper(address)"(
+      _xTokenWrapper: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     smt(overrides?: CallOverrides): Promise<BigNumber>;
 
     "smt()"(overrides?: CallOverrides): Promise<BigNumber>;
@@ -402,9 +579,35 @@ export class SmtPriceFeed extends Contract {
       newOwner: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
+
+    xTokenWrapper(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "xTokenWrapper()"(overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   populateTransaction: {
+    ETH_TOKEN_ADDRESS(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "ETH_TOKEN_ADDRESS()"(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    ONE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "ONE()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    calculateAmount(
+      _asset: string,
+      _tokenAmountIn: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "calculateAmount(address,uint256)"(
+      _asset: string,
+      _tokenAmountIn: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     eurPriceFeed(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "eurPriceFeed()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -455,6 +658,16 @@ export class SmtPriceFeed extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
+    setXTokenWrapper(
+      _xTokenWrapper: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "setXTokenWrapper(address)"(
+      _xTokenWrapper: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
     smt(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "smt()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -468,5 +681,9 @@ export class SmtPriceFeed extends Contract {
       newOwner: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
+
+    xTokenWrapper(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "xTokenWrapper()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
   };
 }

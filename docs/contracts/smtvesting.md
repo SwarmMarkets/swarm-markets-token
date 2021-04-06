@@ -52,7 +52,7 @@
 
 Sets the value for {initialBloc}.
 
-Sets ownership to the account that deploys the contract.
+Sets ownership to the given `_owner`.
 
 ### Function `setToken(address _token) external`
 

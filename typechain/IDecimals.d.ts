@@ -18,25 +18,19 @@ import { Listener, Provider } from "@ethersproject/providers";
 import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
 import { TypedEventFilter, TypedEvent, TypedListener } from "./commons";
 
-interface IEurPriceFeedInterface extends ethers.utils.Interface {
+interface IDecimalsInterface extends ethers.utils.Interface {
   functions: {
-    "assetEthFeed(address)": FunctionFragment;
+    "decimals()": FunctionFragment;
   };
 
-  encodeFunctionData(
-    functionFragment: "assetEthFeed",
-    values: [string]
-  ): string;
+  encodeFunctionData(functionFragment: "decimals", values?: undefined): string;
 
-  decodeFunctionResult(
-    functionFragment: "assetEthFeed",
-    data: BytesLike
-  ): Result;
+  decodeFunctionResult(functionFragment: "decimals", data: BytesLike): Result;
 
   events: {};
 }
 
-export class IEurPriceFeed extends Contract {
+export class IDecimals extends Contract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
@@ -77,53 +71,35 @@ export class IEurPriceFeed extends Contract {
     toBlock?: string | number | undefined
   ): Promise<Array<TypedEvent<EventArgsArray & EventArgsObject>>>;
 
-  interface: IEurPriceFeedInterface;
+  interface: IDecimalsInterface;
 
   functions: {
-    assetEthFeed(_asset: string, overrides?: CallOverrides): Promise<[string]>;
+    decimals(overrides?: CallOverrides): Promise<[number]>;
 
-    "assetEthFeed(address)"(
-      _asset: string,
-      overrides?: CallOverrides
-    ): Promise<[string]>;
+    "decimals()"(overrides?: CallOverrides): Promise<[number]>;
   };
 
-  assetEthFeed(_asset: string, overrides?: CallOverrides): Promise<string>;
+  decimals(overrides?: CallOverrides): Promise<number>;
 
-  "assetEthFeed(address)"(
-    _asset: string,
-    overrides?: CallOverrides
-  ): Promise<string>;
+  "decimals()"(overrides?: CallOverrides): Promise<number>;
 
   callStatic: {
-    assetEthFeed(_asset: string, overrides?: CallOverrides): Promise<string>;
+    decimals(overrides?: CallOverrides): Promise<number>;
 
-    "assetEthFeed(address)"(
-      _asset: string,
-      overrides?: CallOverrides
-    ): Promise<string>;
+    "decimals()"(overrides?: CallOverrides): Promise<number>;
   };
 
   filters: {};
 
   estimateGas: {
-    assetEthFeed(_asset: string, overrides?: CallOverrides): Promise<BigNumber>;
+    decimals(overrides?: CallOverrides): Promise<BigNumber>;
 
-    "assetEthFeed(address)"(
-      _asset: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    "decimals()"(overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   populateTransaction: {
-    assetEthFeed(
-      _asset: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
+    decimals(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    "assetEthFeed(address)"(
-      _asset: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
+    "decimals()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
   };
 }

@@ -1,4 +1,4 @@
-//SPDX-License-Identifier: Unlicense
+//SPDX-License-Identifier: GPL-3.0-only
 pragma solidity ^0.7.0;
 pragma experimental ABIEncoderV2;
 
@@ -29,9 +29,10 @@ contract SmtDistributor is Ownable {
      * Sets ownership to the account that deploys the contract.
      *
      */
-    constructor(address _token) {
+    constructor(address _token, address _owner) {
         require(_token != address(0), "token is the zero address");
         token = IERC20(_token);
+        transferOwnership(_owner);
     }
 
     /**

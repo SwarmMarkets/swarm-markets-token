@@ -5,32 +5,26 @@
 import { Contract, Signer } from "ethers";
 import { Provider } from "@ethersproject/providers";
 
-import type { IEurPriceFeed } from "../IEurPriceFeed";
+import type { IDecimals } from "../IDecimals";
 
-export class IEurPriceFeed__factory {
+export class IDecimals__factory {
   static connect(
     address: string,
     signerOrProvider: Signer | Provider
-  ): IEurPriceFeed {
-    return new Contract(address, _abi, signerOrProvider) as IEurPriceFeed;
+  ): IDecimals {
+    return new Contract(address, _abi, signerOrProvider) as IDecimals;
   }
 }
 
 const _abi = [
   {
-    inputs: [
-      {
-        internalType: "address",
-        name: "_asset",
-        type: "address",
-      },
-    ],
-    name: "assetEthFeed",
+    inputs: [],
+    name: "decimals",
     outputs: [
       {
-        internalType: "address",
+        internalType: "uint8",
         name: "",
-        type: "address",
+        type: "uint8",
       },
     ],
     stateMutability: "view",

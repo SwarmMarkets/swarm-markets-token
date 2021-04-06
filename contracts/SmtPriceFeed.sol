@@ -22,17 +22,17 @@ interface IDecimals {
 contract SmtPriceFeed is Ownable {
     using SafeMath for uint256;
 
+    uint256 public constant ONE = 10**18;
     address public constant ETH_TOKEN_ADDRESS = address(0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE);
-    address public constant ONE = 10**18;
 
+    /// @dev Address smt
+    address public smt;
     /// @dev Address of BRegistry
     IBRegistry public registry;
     /// @dev Address of EurPriceFeed module
     IEurPriceFeed public eurPriceFeed;
     /// @dev Address of XTokenWrapper module
     IXTokenWrapper public xTokenWrapper;
-    /// @dev Address smt
-    address public smt;
 
     /**
      * @dev Emitted when `registry` address is set.
@@ -184,7 +184,7 @@ contract SmtPriceFeed is Ownable {
      */
     function _setXTokenWrapper(address _xTokenWrapper) internal {
         require(_xTokenWrapper != address(0), "xTokenWrapper is the zero address");
-        emit FeeReceiverSet(_xTokenWrapper);
+        emit XTokenWrapperSet(_xTokenWrapper);
         xTokenWrapper = IXTokenWrapper(_xTokenWrapper);
     }
 
@@ -199,9 +199,9 @@ contract SmtPriceFeed is Ownable {
         uint256 amount = getLowerAmountFromPools(_asset, _tokenAmountIn);
 
         // not pool with SMT/asset pair -> calculate base on SMT/ETH pool and Asset/ETH external price feed
-        if (amount = 0) {
-            uint256 ethSmtAmount = getLowerAmountFromPools(IXTokenWrapper.tokenToXToken(ETH_TOKEN_ADDRESS), ONE);
-            address assetEthFeed = IEurPriceFeed.assetEthFeed(_asset);
+        if (amount == 0) {
+            uint256 ethSmtAmount = getLowerAmountFromPools(xTokenWrapper.tokenToXToken(ETH_TOKEN_ADDRESS), ONE);
+            address assetEthFeed = eurPriceFeed.assetEthFeed(_asset);
 
             if (assetEthFeed != address(0)) {
                 // always 18 decimals
@@ -217,25 +217,31 @@ contract SmtPriceFeed is Ownable {
         return amount;
     }
 
-    function getLowerAmountFromPools(address _asset, uint256 _tokenAmountIn) internal returns (uint256) {
+    function getLowerAmountFromPools(address _asset, uint256 _tokenAmountIn) internal view returns (uint256) {
         address[] memory poolAddresses = registry.getBestPoolsWithLimit(_asset, smt, 10);
 
         uint256 bestAmount;
         for (uint256 i = 0; i < poolAddresses.length; i++) {
-            IBPool pool = IBPool(poolAddress);
-            uint256 tokenBalanceIn = pool.getBalance(tokenIn);
-            uint256 tokenBalanceOut = pool.getBalance(tokenOut);
-            uint256 tokenWeightIn = pool.getDenormalizedWeight(tokenIn);
-            uint256 tokenWeightOut = pool.getDenormalizedWeight(tokenOut);
-
-            uint256 amount =
-                pool.calcOutGivenIn(tokenBalanceIn, tokenWeightIn, tokenBalanceOut, tokenWeightOut, _tokenAmountIn, 0);
-
+            uint256 amount = calcOutGivenIn(poolAddresses[i], _asset, _tokenAmountIn);
             if (amount > 0 && amount < bestAmount) {
                 bestAmount = amount;
             }
         }
 
-        return amount;
+        return bestAmount;
+    }
+
+    function calcOutGivenIn(
+      address poolAddress,
+      address _asset,
+      uint256 _tokenAmountIn
+    ) internal view returns (uint256) {
+        IBPool pool = IBPool(poolAddress);
+        uint256 tokenBalanceIn = pool.getBalance(_asset);
+        uint256 tokenBalanceOut = pool.getBalance(smt);
+        uint256 tokenWeightIn = pool.getDenormalizedWeight(_asset);
+        uint256 tokenWeightOut = pool.getDenormalizedWeight(smt);
+
+        return pool.calcOutGivenIn(tokenBalanceIn, tokenWeightIn, tokenBalanceOut, tokenWeightOut, _tokenAmountIn, 0);
     }
 }
