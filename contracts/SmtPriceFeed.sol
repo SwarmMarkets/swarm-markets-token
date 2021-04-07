@@ -24,6 +24,7 @@ interface IDecimals {
 contract SmtPriceFeed is Ownable {
     using SafeMath for uint256;
 
+    uint256 public constant decimals = 18;
     uint256 public constant ONE = 10**18;
     address public constant ETH_TOKEN_ADDRESS = address(0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE);
 
@@ -204,15 +205,20 @@ contract SmtPriceFeed is Ownable {
      * @dev Gets how many SMT represents the `_amount` of `_asset`.
      *
      * @param _asset address of asset to get the amount.
-     * @param _tokenAmountIn amount of `_asset`.
+     * @param _assetAmountIn amount of `_asset`.
      */
-    function calculateAmount(address _asset, uint256 _tokenAmountIn) public view returns (uint256) {
+    function calculateAmount(address _asset, uint256 _assetAmountIn) public view returns (uint256) {
+        // pools will include the wrapepd SMT
+        address xSMT = xTokenWrapper.tokenToXToken(smt);
+        address xETH = xTokenWrapper.tokenToXToken(ETH_TOKEN_ADDRESS);
+
         // get amount from some of the pools
-        uint256 amount = getAvgAmountFromPools(_asset, _tokenAmountIn);
+        uint256 amount = getAvgAmountFromPools(_asset, xSMT, _assetAmountIn);
 
         // not pool with SMT/asset pair -> calculate base on SMT/ETH pool and Asset/ETH external price feed
         if (amount == 0) {
-            uint256 ethSmtAmount = getAvgAmountFromPools(xTokenWrapper.tokenToXToken(ETH_TOKEN_ADDRESS), ONE);
+            // pools will include the wrapepd ETH
+            uint256 ethSmtAmount = getAvgAmountFromPools(xETH, xSMT, ONE);
 
             address assetEthFeed = eurPriceFeed.assetEthFeed(_asset);
 
@@ -221,7 +227,7 @@ contract SmtPriceFeed is Ownable {
                 int256 assetEthPrice = AggregatorV2V3Interface(assetEthFeed).latestAnswer();
                 if (assetEthPrice > 0) {
                     uint8 assetDecimals = IDecimals(_asset).decimals();
-                    uint256 assetToEthAmount = _tokenAmountIn.mul(uint256(assetEthPrice)).div(10**assetDecimals);
+                    uint256 assetToEthAmount = _assetAmountIn.mul(uint256(assetEthPrice)).div(10**assetDecimals);
 
                     amount = assetToEthAmount.mul(ethSmtAmount).div(ONE);
                 }
@@ -231,28 +237,50 @@ contract SmtPriceFeed is Ownable {
         return amount;
     }
 
-    function getAvgAmountFromPools(address _asset, uint256 _tokenAmountIn) internal view returns (uint256) {
-        address[] memory poolAddresses = registry.getBestPoolsWithLimit(_asset, smt, 10);
+    /**
+     * @dev Gets SMT/ETH based on the avg price from pools containig the pair.
+     *
+     * To be consume by EurPriceFeed module as the `assetEthFeed` from xSMT.
+     */
+    function latestAnswer() external view returns (int256) {
+        // pools will include the wrapepd SMT and wrapped ETH
+        uint256 price =
+            getAvgAmountFromPools(
+                xTokenWrapper.tokenToXToken(smt),
+                xTokenWrapper.tokenToXToken(ETH_TOKEN_ADDRESS),
+                ONE
+            );
+
+        return int256(price);
+    }
+
+    function getAvgAmountFromPools(
+        address _assetIn,
+        address _assetOut,
+        uint256 _assetAmountIn
+    ) internal view returns (uint256) {
+        address[] memory poolAddresses = registry.getBestPoolsWithLimit(_assetIn, _assetOut, 10);
 
         uint256 totalAmount;
         for (uint256 i = 0; i < poolAddresses.length; i++) {
-            totalAmount += calcOutGivenIn(poolAddresses[i], _asset, _tokenAmountIn);
+            totalAmount += calcOutGivenIn(poolAddresses[i], _assetIn, _assetOut, _assetAmountIn);
         }
 
         return totalAmount > 0 ? totalAmount.div(poolAddresses.length) : 0;
     }
 
     function calcOutGivenIn(
-      address poolAddress,
-      address _asset,
-      uint256 _tokenAmountIn
+        address poolAddress,
+        address _assetIn,
+        address _assetOut,
+        uint256 _assetAmountIn
     ) internal view returns (uint256) {
         IBPool pool = IBPool(poolAddress);
-        uint256 tokenBalanceIn = pool.getBalance(_asset);
-        uint256 tokenBalanceOut = pool.getBalance(smt);
-        uint256 tokenWeightIn = pool.getDenormalizedWeight(_asset);
-        uint256 tokenWeightOut = pool.getDenormalizedWeight(smt);
+        uint256 tokenBalanceIn = pool.getBalance(_assetIn);
+        uint256 tokenBalanceOut = pool.getBalance(_assetOut);
+        uint256 tokenWeightIn = pool.getDenormalizedWeight(_assetIn);
+        uint256 tokenWeightOut = pool.getDenormalizedWeight(_assetOut);
 
-        return pool.calcOutGivenIn(tokenBalanceIn, tokenWeightIn, tokenBalanceOut, tokenWeightOut, _tokenAmountIn, 0);
+        return pool.calcOutGivenIn(tokenBalanceIn, tokenWeightIn, tokenBalanceOut, tokenWeightOut, _assetAmountIn, 0);
     }
 }

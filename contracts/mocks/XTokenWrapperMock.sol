@@ -2,9 +2,10 @@
 pragma solidity ^0.7.0;
 
 contract XTokenWrapperMock {
-    address public constant ETH_TOKEN_ADDRESS = address(0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE);
+    mapping(address => address) public tokenToXToken;
 
-    function tokenToXToken(address) external pure returns (address) {
-      return ETH_TOKEN_ADDRESS;
+    function setTokenToXToken(address token, address xToken) external {
+      tokenToXToken[token] = xToken;
     }
+
 }

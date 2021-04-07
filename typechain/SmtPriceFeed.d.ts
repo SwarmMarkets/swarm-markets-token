@@ -24,8 +24,10 @@ interface SmtPriceFeedInterface extends ethers.utils.Interface {
     "ETH_TOKEN_ADDRESS()": FunctionFragment;
     "ONE()": FunctionFragment;
     "calculateAmount(address,uint256)": FunctionFragment;
+    "decimals()": FunctionFragment;
     "eurPriceFeed()": FunctionFragment;
     "getPrice(address)": FunctionFragment;
+    "latestAnswer()": FunctionFragment;
     "owner()": FunctionFragment;
     "registry()": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
@@ -47,11 +49,16 @@ interface SmtPriceFeedInterface extends ethers.utils.Interface {
     functionFragment: "calculateAmount",
     values: [string, BigNumberish]
   ): string;
+  encodeFunctionData(functionFragment: "decimals", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "eurPriceFeed",
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "getPrice", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "latestAnswer",
+    values?: undefined
+  ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(functionFragment: "registry", values?: undefined): string;
   encodeFunctionData(
@@ -87,11 +94,16 @@ interface SmtPriceFeedInterface extends ethers.utils.Interface {
     functionFragment: "calculateAmount",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "decimals", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "eurPriceFeed",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "getPrice", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "latestAnswer",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "registry", data: BytesLike): Result;
   decodeFunctionResult(
@@ -190,15 +202,19 @@ export class SmtPriceFeed extends Contract {
 
     calculateAmount(
       _asset: string,
-      _tokenAmountIn: BigNumberish,
+      _assetAmountIn: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
     "calculateAmount(address,uint256)"(
       _asset: string,
-      _tokenAmountIn: BigNumberish,
+      _assetAmountIn: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
+
+    decimals(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    "decimals()"(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     eurPriceFeed(overrides?: CallOverrides): Promise<[string]>;
 
@@ -210,6 +226,10 @@ export class SmtPriceFeed extends Contract {
       _asset: string,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
+
+    latestAnswer(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    "latestAnswer()"(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     owner(overrides?: CallOverrides): Promise<[string]>;
 
@@ -296,15 +316,19 @@ export class SmtPriceFeed extends Contract {
 
   calculateAmount(
     _asset: string,
-    _tokenAmountIn: BigNumberish,
+    _assetAmountIn: BigNumberish,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
   "calculateAmount(address,uint256)"(
     _asset: string,
-    _tokenAmountIn: BigNumberish,
+    _assetAmountIn: BigNumberish,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
+
+  decimals(overrides?: CallOverrides): Promise<BigNumber>;
+
+  "decimals()"(overrides?: CallOverrides): Promise<BigNumber>;
 
   eurPriceFeed(overrides?: CallOverrides): Promise<string>;
 
@@ -316,6 +340,10 @@ export class SmtPriceFeed extends Contract {
     _asset: string,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
+
+  latestAnswer(overrides?: CallOverrides): Promise<BigNumber>;
+
+  "latestAnswer()"(overrides?: CallOverrides): Promise<BigNumber>;
 
   owner(overrides?: CallOverrides): Promise<string>;
 
@@ -402,15 +430,19 @@ export class SmtPriceFeed extends Contract {
 
     calculateAmount(
       _asset: string,
-      _tokenAmountIn: BigNumberish,
+      _assetAmountIn: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     "calculateAmount(address,uint256)"(
       _asset: string,
-      _tokenAmountIn: BigNumberish,
+      _assetAmountIn: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    decimals(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "decimals()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     eurPriceFeed(overrides?: CallOverrides): Promise<string>;
 
@@ -422,6 +454,10 @@ export class SmtPriceFeed extends Contract {
       _asset: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    latestAnswer(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "latestAnswer()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     owner(overrides?: CallOverrides): Promise<string>;
 
@@ -520,15 +556,19 @@ export class SmtPriceFeed extends Contract {
 
     calculateAmount(
       _asset: string,
-      _tokenAmountIn: BigNumberish,
+      _assetAmountIn: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     "calculateAmount(address,uint256)"(
       _asset: string,
-      _tokenAmountIn: BigNumberish,
+      _assetAmountIn: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    decimals(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "decimals()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     eurPriceFeed(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -540,6 +580,10 @@ export class SmtPriceFeed extends Contract {
       _asset: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    latestAnswer(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "latestAnswer()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -629,15 +673,19 @@ export class SmtPriceFeed extends Contract {
 
     calculateAmount(
       _asset: string,
-      _tokenAmountIn: BigNumberish,
+      _assetAmountIn: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     "calculateAmount(address,uint256)"(
       _asset: string,
-      _tokenAmountIn: BigNumberish,
+      _assetAmountIn: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
+
+    decimals(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "decimals()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     eurPriceFeed(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
@@ -652,6 +700,10 @@ export class SmtPriceFeed extends Contract {
       _asset: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
+
+    latestAnswer(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "latestAnswer()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 

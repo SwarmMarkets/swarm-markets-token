@@ -11,6 +11,7 @@ import {
   PopulatedTransaction,
   Contract,
   ContractTransaction,
+  Overrides,
   CallOverrides,
 } from "ethers";
 import { BytesLike } from "@ethersproject/bytes";
@@ -20,13 +21,13 @@ import { TypedEventFilter, TypedEvent, TypedListener } from "./commons";
 
 interface XTokenWrapperMockInterface extends ethers.utils.Interface {
   functions: {
-    "ETH_TOKEN_ADDRESS()": FunctionFragment;
+    "setTokenToXToken(address,address)": FunctionFragment;
     "tokenToXToken(address)": FunctionFragment;
   };
 
   encodeFunctionData(
-    functionFragment: "ETH_TOKEN_ADDRESS",
-    values?: undefined
+    functionFragment: "setTokenToXToken",
+    values: [string, string]
   ): string;
   encodeFunctionData(
     functionFragment: "tokenToXToken",
@@ -34,7 +35,7 @@ interface XTokenWrapperMockInterface extends ethers.utils.Interface {
   ): string;
 
   decodeFunctionResult(
-    functionFragment: "ETH_TOKEN_ADDRESS",
+    functionFragment: "setTokenToXToken",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -89,9 +90,17 @@ export class XTokenWrapperMock extends Contract {
   interface: XTokenWrapperMockInterface;
 
   functions: {
-    ETH_TOKEN_ADDRESS(overrides?: CallOverrides): Promise<[string]>;
+    setTokenToXToken(
+      token: string,
+      xToken: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
-    "ETH_TOKEN_ADDRESS()"(overrides?: CallOverrides): Promise<[string]>;
+    "setTokenToXToken(address,address)"(
+      token: string,
+      xToken: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     tokenToXToken(arg0: string, overrides?: CallOverrides): Promise<[string]>;
 
@@ -101,9 +110,17 @@ export class XTokenWrapperMock extends Contract {
     ): Promise<[string]>;
   };
 
-  ETH_TOKEN_ADDRESS(overrides?: CallOverrides): Promise<string>;
+  setTokenToXToken(
+    token: string,
+    xToken: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
-  "ETH_TOKEN_ADDRESS()"(overrides?: CallOverrides): Promise<string>;
+  "setTokenToXToken(address,address)"(
+    token: string,
+    xToken: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
   tokenToXToken(arg0: string, overrides?: CallOverrides): Promise<string>;
 
@@ -113,9 +130,17 @@ export class XTokenWrapperMock extends Contract {
   ): Promise<string>;
 
   callStatic: {
-    ETH_TOKEN_ADDRESS(overrides?: CallOverrides): Promise<string>;
+    setTokenToXToken(
+      token: string,
+      xToken: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
-    "ETH_TOKEN_ADDRESS()"(overrides?: CallOverrides): Promise<string>;
+    "setTokenToXToken(address,address)"(
+      token: string,
+      xToken: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     tokenToXToken(arg0: string, overrides?: CallOverrides): Promise<string>;
 
@@ -128,9 +153,17 @@ export class XTokenWrapperMock extends Contract {
   filters: {};
 
   estimateGas: {
-    ETH_TOKEN_ADDRESS(overrides?: CallOverrides): Promise<BigNumber>;
+    setTokenToXToken(
+      token: string,
+      xToken: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
 
-    "ETH_TOKEN_ADDRESS()"(overrides?: CallOverrides): Promise<BigNumber>;
+    "setTokenToXToken(address,address)"(
+      token: string,
+      xToken: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
 
     tokenToXToken(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -141,10 +174,16 @@ export class XTokenWrapperMock extends Contract {
   };
 
   populateTransaction: {
-    ETH_TOKEN_ADDRESS(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    setTokenToXToken(
+      token: string,
+      xToken: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
 
-    "ETH_TOKEN_ADDRESS()"(
-      overrides?: CallOverrides
+    "setTokenToXToken(address,address)"(
+      token: string,
+      xToken: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     tokenToXToken(
