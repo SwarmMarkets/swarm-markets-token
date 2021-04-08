@@ -26,12 +26,19 @@ const chainIds = {
 };
 
 // Ensure that we have all the environment variables we need.
-let mnemonic: string;
-if (!process.env.MNEMONIC) {
-  throw new Error('Please set your MNEMONIC in a .env file');
+let deployerPk: string;
+if (!process.env.DEPLOYER_PK) {
+  throw new Error('Please set your DEPLOYER_PK in a .env file');
 } else {
-  mnemonic = process.env.MNEMONIC;
+  deployerPk = process.env.DEPLOYER_PK;
 }
+
+// let mnemonic: string;
+// if (!process.env.MNEMONIC) {
+//   throw new Error('Please set your MNEMONIC in a .env file');
+// } else {
+//   mnemonic = process.env.MNEMONIC;
+// }
 
 let infuraApiKey: string;
 if (!process.env.INFURA_API_KEY) {
@@ -60,14 +67,10 @@ if (!process.env.INFURA_API_KEY) {
 function createTestnetConfig(network: keyof typeof chainIds): NetworkUserConfig {
   const url: string = 'https://' + network + '.infura.io/v3/' + infuraApiKey;
   return {
-    accounts: {
-      count: 10,
-      initialIndex: 0,
-      mnemonic,
-      path: "m/44'/60'/0'/0",
-    },
+    accounts: [deployerPk],
     chainId: chainIds[network],
     url,
+    gasPrice: 250000000000,
   };
 }
 
@@ -79,6 +82,7 @@ const config: HardhatUserConfig = {
     kovan: createTestnetConfig('kovan'),
     rinkeby: createTestnetConfig('rinkeby'),
     ropsten: createTestnetConfig('ropsten'),
+    mainnet: createTestnetConfig('mainnet'),
   },
   paths: {
     artifacts: './artifacts',
