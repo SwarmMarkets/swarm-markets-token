@@ -7,7 +7,9 @@ export type { ERC20 } from "./ERC20";
 export type { ERC20Burnable } from "./ERC20Burnable";
 export type { IERC20 } from "./IERC20";
 export type { SmtDistributor } from "./SmtDistributor";
+export type { SmtVesting } from "./SmtVesting";
 export type { SwarmMarketsToken } from "./SwarmMarketsToken";
+export type { SmtVestingWithSetters } from "./SmtVestingWithSetters";
 
 export { Ownable__factory } from "./factories/Ownable__factory";
 export { ERC20PresetFixedSupply__factory } from "./factories/ERC20PresetFixedSupply__factory";
@@ -15,4 +17,6 @@ export { ERC20__factory } from "./factories/ERC20__factory";
 export { ERC20Burnable__factory } from "./factories/ERC20Burnable__factory";
 export { IERC20__factory } from "./factories/IERC20__factory";
 export { SmtDistributor__factory } from "./factories/SmtDistributor__factory";
+export { SmtVesting__factory } from "./factories/SmtVesting__factory";
 export { SwarmMarketsToken__factory } from "./factories/SwarmMarketsToken__factory";
+export { SmtVestingWithSetters__factory } from "./factories/SmtVestingWithSetters__factory";

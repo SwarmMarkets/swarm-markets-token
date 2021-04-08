@@ -13,45 +13,43 @@ let karpincho: Signer;
 let deployerAddress: string;
 let kakarotoAddress: string;
 let vegetaAddress: string;
-let karpinchoAddress: string;
 
 let SMTContract: SwarmMarketsToken;
 let smtDisctributorContract: SmtDistributor;
 let smtDisctributorContractKakaroto: SmtDistributor;
-// let smtDisctributorContractVegeta: SmtDistributor;
 let smtDisctributorContractKarpincho: SmtDistributor;
 
 let SmtDistributorFactory: ContractFactory;
 
-const tokenSupply = ethers.constants.One.mul(250000000);
-
-describe('STM', function () {
+describe('SmtDistributor contract', function () {
   const reverter = new Reverter();
 
   before(async () => {
     [deployer, kakaroto, vegeta, karpincho] = await ethers.getSigners();
-    [deployerAddress, kakarotoAddress, vegetaAddress, karpinchoAddress] = await Promise.all([
+    [deployerAddress, kakarotoAddress, vegetaAddress] = await Promise.all([
       deployer.getAddress(),
       kakaroto.getAddress(),
       vegeta.getAddress(),
-      karpincho.getAddress(),
     ]);
 
     SmtDistributorFactory = await ethers.getContractFactory('SmtDistributor');
     const SwarmMarketsTokenFactory = await ethers.getContractFactory('SwarmMarketsToken');
 
-    SMTContract = (await SwarmMarketsTokenFactory.deploy(tokenSupply, deployerAddress)) as SwarmMarketsToken;
+    SMTContract = (await SwarmMarketsTokenFactory.deploy(deployerAddress)) as SwarmMarketsToken;
     await SMTContract.deployed();
   });
 
   it('should not be able to deploy with zero address for token', async () => {
-    await expect(SmtDistributorFactory.deploy(ethers.constants.AddressZero)).to.be.revertedWith(
+    await expect(SmtDistributorFactory.deploy(ethers.constants.AddressZero, deployerAddress)).to.be.revertedWith(
       'token is the zero address',
     );
   });
 
   it('should be able to deploy with non zero address for token', async () => {
-    smtDisctributorContract = (await SmtDistributorFactory.deploy(SMTContract.address)) as SmtDistributor;
+    smtDisctributorContract = (await SmtDistributorFactory.deploy(
+      SMTContract.address,
+      deployerAddress,
+    )) as SmtDistributor;
     await smtDisctributorContract.deployed();
 
     smtDisctributorContractKakaroto = smtDisctributorContract.connect(kakaroto);
@@ -131,14 +129,8 @@ describe('STM', function () {
   });
 
   describe('#claim', () => {
-    it('nothing should happend if non-beneficiary calls claim', async () => {
-      const distributorInitialBlance = await SMTContract.balanceOf(smtDisctributorContractKarpincho.address);
-      const karpinchoInitialBlance = await SMTContract.balanceOf(karpinchoAddress);
-
-      await smtDisctributorContractKarpincho.claim();
-
-      expect(await SMTContract.balanceOf(smtDisctributorContractKarpincho.address)).to.eq(distributorInitialBlance);
-      expect(await SMTContract.balanceOf(karpinchoAddress)).to.eq(karpinchoInitialBlance);
+    it('should revert if non-beneficiary calls claim', async () => {
+      await expect(smtDisctributorContractKarpincho.claim()).to.be.revertedWith('no rewards');
     });
 
     it('a beneficiary should be able to claim its current reward', async () => {

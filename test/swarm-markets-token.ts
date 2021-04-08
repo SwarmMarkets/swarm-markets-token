@@ -11,16 +11,16 @@ let kakarotoAddress: string;
 
 let SMTContract: SwarmMarketsToken;
 
-const tokenSupply = ethers.constants.One.mul(250000000);
+const tokenSupply = ethers.constants.WeiPerEther.mul(250000000);
 
-describe('STM', function () {
+describe('SwarmMarketsToken contract', function () {
   before(async () => {
     [, kakaroto] = await ethers.getSigners();
     kakarotoAddress = await kakaroto.getAddress();
 
     const SwarmMarketsTokenFactory = await ethers.getContractFactory('SwarmMarketsToken');
 
-    SMTContract = (await SwarmMarketsTokenFactory.deploy(tokenSupply, kakarotoAddress)) as SwarmMarketsToken;
+    SMTContract = (await SwarmMarketsTokenFactory.deploy(kakarotoAddress)) as SwarmMarketsToken;
     await SMTContract.deployed();
   });
 
