@@ -70,7 +70,7 @@ function createTestnetConfig(network: keyof typeof chainIds): NetworkUserConfig 
     accounts: [deployerPk],
     chainId: chainIds[network],
     url,
-    gasPrice: 250000000000,
+    gasPrice: 126000000000,
   };
 }
 
