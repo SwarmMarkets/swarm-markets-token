@@ -26,11 +26,11 @@ const chainIds = {
 };
 
 // Ensure that we have all the environment variables we need.
-let deployerPk: string;
-if (!process.env.DEPLOYER_PK) {
-  throw new Error('Please set your DEPLOYER_PK in a .env file');
+let mnemonic: string;
+if (!process.env.MNEMONIC) {
+  throw new Error('Please set your MNEMONIC in a .env file');
 } else {
-  deployerPk = process.env.DEPLOYER_PK;
+  mnemonic = process.env.MNEMONIC;
 }
 
 // let mnemonic: string;
@@ -67,10 +67,15 @@ if (!process.env.INFURA_API_KEY) {
 function createTestnetConfig(network: keyof typeof chainIds): NetworkUserConfig {
   const url: string = 'https://' + network + '.infura.io/v3/' + infuraApiKey;
   return {
-    accounts: [deployerPk],
+    accounts: {
+      count: 10,
+      initialIndex: 0,
+      mnemonic,
+      path: "m/44'/60'/0'/0",
+    },
     chainId: chainIds[network],
     url,
-    gasPrice: 126000000000,
+    gasPrice: 20000000000,
   };
 }
 

@@ -1,7 +1,7 @@
 import hre from 'hardhat';
 import { ContractFactory } from 'ethers';
 import { TransactionResponse } from '@ethersproject/abstract-provider';
-import { SwarmMarketsToken, SmtDistributor, SmtVesting } from '../typechain';
+import { SwarmMarketsToken } from '../typechain';
 
 import assert from 'assert';
 import ora, { Ora } from 'ora';
@@ -11,8 +11,6 @@ import { promises as fs } from 'fs';
 import { getChainId, networkNames } from '@openzeppelin/upgrades-core';
 
 import SwarmMarketsTokenArtifact from '../artifacts/contracts/SwarmMarketsToken.sol/SwarmMarketsToken.json';
-import SmtDistributorArtifact from '../artifacts/contracts/SmtDistributor.sol/SmtDistributor.json';
-import SmtVestingArtifact from '../artifacts/contracts/SmtVesting.sol/SmtVesting.json';
 
 let spinner: Ora;
 
@@ -26,30 +24,10 @@ async function main(): Promise<void> {
   let deploymentData = await read();
 
   if (process.env.TREASURY_ACCOUNT) {
-    startLog('Deploying SmtVesting contract');
-    const SmtVestingFactory: ContractFactory = await ethers.getContractFactory('SmtVesting');
-    const SmtVestingContract: SmtVesting = (await SmtVestingFactory.deploy()) as SmtVesting;
-    updatetLog(`Deploying SmtVesting contract - txHash: ${SmtVestingContract.deployTransaction.hash}`);
-    await SmtVestingContract.deployed();
-
-    deploymentData = {
-      ...deploymentData,
-      SmtVesting: {
-        address: SmtVestingContract.address,
-        abi: SmtVestingArtifact.abi,
-        deployTransaction: await getRecipt(SmtVestingContract.deployTransaction),
-      },
-    };
-
-    await write(deploymentData);
-    stopLog(
-      `SmtVesting deployed - txHash: ${SmtVestingContract.deployTransaction.hash} - address: ${SmtVestingContract.address}`,
-    );
-
     startLog('Deploying SwarmMarketsToken contract');
     const SwarmMarketsTokenFactory: ContractFactory = await ethers.getContractFactory('SwarmMarketsToken');
     const SwarmMarketsTokenContract: SwarmMarketsToken = (await SwarmMarketsTokenFactory.deploy(
-      deploymentData.SmtVesting.address,
+      process.env.TREASURY_ACCOUNT,
     )) as SwarmMarketsToken;
     updatetLog(`Deploying SwarmMarketsToken contract - txHash: ${SwarmMarketsTokenContract.deployTransaction.hash}`);
     await SwarmMarketsTokenContract.deployed();
@@ -67,43 +45,6 @@ async function main(): Promise<void> {
     stopLog(
       `SwarmMarketsToken deployed - txHash: ${SwarmMarketsTokenContract.deployTransaction.hash} - address: ${SwarmMarketsTokenContract.address}`,
     );
-
-    startLog('Deploying SmtDistributor contract');
-    const SmtDistributorFactory: ContractFactory = await ethers.getContractFactory('SmtDistributor');
-    const SmtDistributorContract: SmtDistributor = (await SmtDistributorFactory.deploy(
-      deploymentData.SwarmMarketsToken.address,
-      process.env.TREASURY_ACCOUNT,
-    )) as SmtDistributor;
-    updatetLog(`Deploying SmtDistributor contract - txHash: ${SmtDistributorContract.deployTransaction.hash}`);
-    await SmtDistributorContract.deployed();
-
-    deploymentData = {
-      ...deploymentData,
-      SmtDistributor: {
-        address: SmtDistributorContract.address,
-        abi: SmtDistributorArtifact.abi,
-        deployTransaction: await getRecipt(SmtDistributorContract.deployTransaction),
-      },
-    };
-
-    await write(deploymentData);
-    stopLog(
-      `SmtDistributor deployed - txHash: ${SmtDistributorContract.deployTransaction.hash} - address: ${SmtDistributorContract.address}`,
-    );
-
-    // Set SmtVesting token
-    startLog('Setting SmtVesting token');
-    const piaTx = await SmtVestingContract.setToken(deploymentData.SwarmMarketsToken.address);
-    updatetLog(`Setting SmtVesting token - txHash: ${piaTx.hash}`);
-    await piaTx.wait();
-    stopLog(`Done setting SmtVesting token - txHash: ${piaTx.hash}`);
-
-    // Transfer SmtVesting ownership
-    startLog('Transfer SmtVesting ownership to TREASURY_ACCOUNT');
-    const toTx = await SmtVestingContract.transferOwnership(process.env.TREASURY_ACCOUNT);
-    updatetLog(`Transfer SmtVesting ownership to TREASURY_ACCOUNT - txHash: ${toTx.hash}`);
-    await toTx.wait();
-    stopLog(`Done Transfer SmtVesting ownership to TREASURY_ACCOUNT - txHash: ${toTx.hash}`);
   }
 }
 
