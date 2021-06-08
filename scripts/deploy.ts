@@ -1,7 +1,7 @@
 import hre from 'hardhat';
 import { ContractFactory } from 'ethers';
 import { TransactionResponse } from '@ethersproject/abstract-provider';
-import { SwarmMarketsToken } from '../typechain';
+import { SwarmMarketsToken, SmtPriceFeed } from '../typechain';
 
 import assert from 'assert';
 import ora, { Ora } from 'ora';
@@ -23,28 +23,65 @@ async function main(): Promise<void> {
   // const deployerAddress = await deployer.getAddress();
   let deploymentData = await read();
 
+  let swarmMarketsToken: SwarmMarketsToken;
   if (process.env.TREASURY_ACCOUNT) {
     startLog('Deploying SwarmMarketsToken contract');
-    const SwarmMarketsTokenFactory: ContractFactory = await ethers.getContractFactory('SwarmMarketsToken');
-    const SwarmMarketsTokenContract: SwarmMarketsToken = (await SwarmMarketsTokenFactory.deploy(
-      process.env.TREASURY_ACCOUNT,
-    )) as SwarmMarketsToken;
-    updatetLog(`Deploying SwarmMarketsToken contract - txHash: ${SwarmMarketsTokenContract.deployTransaction.hash}`);
-    await SwarmMarketsTokenContract.deployed();
+    const swarmMarketsTokenAddress = deploymentData['SwarmMarketsToken'] && deploymentData['SwarmMarketsToken'].address;
+    if(swarmMarketsTokenAddress){
+      stopLog(`SwarmMarketsToken already deployed at ${swarmMarketsTokenAddress}`);
+      swarmMarketsToken= (await ethers.getContractAt( 'SwarmMarketsToken', swarmMarketsTokenAddress)) as SwarmMarketsToken;
+    } else {
+      const SwarmMarketsTokenFactory: ContractFactory = await ethers.getContractFactory('SwarmMarketsToken');
+      swarmMarketsToken= (await SwarmMarketsTokenFactory.deploy(
+        process.env.TREASURY_ACCOUNT,
+      )) as SwarmMarketsToken;
+      updatetLog(`Deploying SwarmMarketsToken contract - txHash: ${swarmMarketsToken.deployTransaction.hash}`);
+      await swarmMarketsToken.deployed();
+
+      deploymentData = {
+        ...deploymentData,
+        SwarmMarketsToken: {
+          address: swarmMarketsToken.address,
+          abi: SwarmMarketsTokenArtifact.abi,
+          deployTransaction: await getRecipt(swarmMarketsToken.deployTransaction),
+        },
+      };
+
+      await write(deploymentData);
+      stopLog(
+        `SwarmMarketsToken deployed - txHash: ${swarmMarketsToken.deployTransaction.hash} - address: ${swarmMarketsToken.address}`,
+      );
+    }
+
+    startLog('Deploying SmtPriceFeed contract');
+    if(deploymentData['SmtPriceFeed']  && deploymentData['SmtPriceFeed'].address){
+      stopLog(`SmtPriceFeed already deployed at ${deploymentData['SwarmMarketsToken'].address}`);
+    } else {
+    const SmtPriceFeedFactory: ContractFactory = await ethers.getContractFactory('SmtPriceFeed');
+    const smtPriceFeed: SmtPriceFeed = (await SmtPriceFeedFactory.deploy(
+      process.env.BREGISTRY,
+      process.env.EUR_USD_FEED,
+      swarmMarketsToken.address,
+      process.env.XTOKENWRAPPER,
+    )) as SmtPriceFeed;
+    updatetLog(`Deploying smtPriceFeed contract - txHash: ${smtPriceFeed.deployTransaction.hash}`);
+    await smtPriceFeed.deployed();
 
     deploymentData = {
       ...deploymentData,
-      SwarmMarketsToken: {
-        address: SwarmMarketsTokenContract.address,
-        abi: SwarmMarketsTokenArtifact.abi,
-        deployTransaction: await getRecipt(SwarmMarketsTokenContract.deployTransaction),
+      SmtPriceFeed: {
+        address: smtPriceFeed.address,
+        deployTransaction: await getRecipt(smtPriceFeed.deployTransaction),
       },
     };
 
     await write(deploymentData);
     stopLog(
-      `SwarmMarketsToken deployed - txHash: ${SwarmMarketsTokenContract.deployTransaction.hash} - address: ${SwarmMarketsTokenContract.address}`,
+      `smtPriceFeed deployed - txHash: ${smtPriceFeed.deployTransaction.hash} - address: ${smtPriceFeed.address}`,
     );
+
+      
+    }
   }
 }
 
