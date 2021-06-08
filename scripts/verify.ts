@@ -18,6 +18,18 @@ async function main(): Promise<void> {
       constructorArguments: [process.env.TREASURY_ACCOUNT],
       contract: 'contracts/SwarmMarketsToken.sol:SwarmMarketsToken',
     });
+
+    // SmtPriceFeed
+    await hre.run('verify:verify', {
+      address: deploymentData.SmtPriceFeed.address,
+      constructorArguments: [
+        process.env.BREGISTRY,
+        process.env.EUR_USD_FEED,
+        deploymentData.SwarmMarketsToken.address,
+        process.env.XTOKENWRAPPER,
+      ],
+      contract: 'contracts/SmtPriceFeed.sol:SmtPriceFeed',
+    });
   }
 }
 
