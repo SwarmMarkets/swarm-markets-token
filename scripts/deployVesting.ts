@@ -28,7 +28,7 @@ async function main(): Promise<void> {
   if (process.env.TREASURY_ACCOUNT) {
     startLog('Deploying SmtVesting contract');
     const SmtVestingFactory: ContractFactory = await ethers.getContractFactory('SmtVesting');
-    const SmtVestingContract: SmtVesting = (await SmtVestingFactory.deploy("Vestin Swarm Markets Token","vSMT","0x244CAf2A12877018C4cD188215d2473BcdaA5D82")) as SmtVesting;
+    const SmtVestingContract: SmtVesting = (await SmtVestingFactory.deploy("Vestin Swarm Markets Token","vSMT")) as SmtVesting;
     updatetLog(`Deploying SmtVesting contract - txHash: ${SmtVestingContract.deployTransaction.hash}`);
     await SmtVestingContract.deployed();
 
@@ -47,18 +47,18 @@ async function main(): Promise<void> {
     );
 
     // Set SmtVesting token
-    startLog('Setting SmtVesting token');
-    const piaTx = await SmtVestingContract.setToken(deploymentData.SwarmMarketsToken.address);
-    updatetLog(`Setting SmtVesting token - txHash: ${piaTx.hash}`);
+    startLog('Setting SmtVesting accepted token');
+    const piaTx = await SmtVestingContract.setAcceptedToken(deploymentData.SwarmMarketsToken.address);
+    updatetLog(`Setting SmtVesting accepted token - txHash: ${piaTx.hash}`);
     await piaTx.wait();
-    stopLog(`Done setting SmtVesting token - txHash: ${piaTx.hash}`);
+    stopLog(`Done setting SmtVesting accepted token - txHash: ${piaTx.hash}`);
 
     // Transfer SmtVesting ownership
-    startLog('Transfer SmtVesting ownership to TREASURY_ACCOUNT');
-    const toTx = await SmtVestingContract.transferOwnership(process.env.TREASURY_ACCOUNT);
-    updatetLog(`Transfer SmtVesting ownership to TREASURY_ACCOUNT - txHash: ${toTx.hash}`);
+    startLog('Add TREASURY_ACCOUNT to whitelist');
+    const toTx = await SmtVestingContract.addWhitelistedAddress(process.env.TREASURY_ACCOUNT);
+    updatetLog(`Add TREASURY_ACCOUNT to whitelist - txHash: ${toTx.hash}`);
     await toTx.wait();
-    stopLog(`Done Transfer SmtVesting ownership to TREASURY_ACCOUNT - txHash: ${toTx.hash}`);
+    stopLog(`Done Add TREASURY_ACCOUNT to whitelist - txHash: ${toTx.hash}`);
   }
 }
 

@@ -19,28 +19,18 @@ import { Listener, Provider } from "@ethersproject/providers";
 import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
 import { TypedEventFilter, TypedEvent, TypedListener } from "./commons";
 
-interface SmtVestingInterface extends ethers.utils.Interface {
+interface ERC20PresetMinterPauserInterface extends ethers.utils.Interface {
   functions: {
     "DEFAULT_ADMIN_ROLE()": FunctionFragment;
     "MINTER_ROLE()": FunctionFragment;
     "PAUSER_ROLE()": FunctionFragment;
-    "acceptedToken()": FunctionFragment;
-    "addWhitelistedAddress(address)": FunctionFragment;
     "allowance(address,address)": FunctionFragment;
     "approve(address,uint256)": FunctionFragment;
     "balanceOf(address)": FunctionFragment;
     "burn(uint256)": FunctionFragment;
     "burnFrom(address,uint256)": FunctionFragment;
-    "claim(uint256)": FunctionFragment;
-    "claimMaximunAmount()": FunctionFragment;
-    "claimings(address)": FunctionFragment;
-    "currentQuarterSinceStartTime()": FunctionFragment;
     "decimals()": FunctionFragment;
     "decreaseAllowance(address,uint256)": FunctionFragment;
-    "deposit(uint256)": FunctionFragment;
-    "distributionStartTime()": FunctionFragment;
-    "getClaimableAmount(address)": FunctionFragment;
-    "getCurrentLockedAmount()": FunctionFragment;
     "getRoleAdmin(bytes32)": FunctionFragment;
     "getRoleMember(bytes32,uint256)": FunctionFragment;
     "getRoleMemberCount(bytes32)": FunctionFragment;
@@ -53,14 +43,11 @@ interface SmtVestingInterface extends ethers.utils.Interface {
     "paused()": FunctionFragment;
     "renounceRole(bytes32,address)": FunctionFragment;
     "revokeRole(bytes32,address)": FunctionFragment;
-    "setAcceptedToken(address)": FunctionFragment;
-    "setStartTime(uint256)": FunctionFragment;
     "symbol()": FunctionFragment;
     "totalSupply()": FunctionFragment;
     "transfer(address,uint256)": FunctionFragment;
     "transferFrom(address,address,uint256)": FunctionFragment;
     "unpause()": FunctionFragment;
-    "whitelist(address)": FunctionFragment;
   };
 
   encodeFunctionData(
@@ -76,14 +63,6 @@ interface SmtVestingInterface extends ethers.utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "acceptedToken",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "addWhitelistedAddress",
-    values: [string]
-  ): string;
-  encodeFunctionData(
     functionFragment: "allowance",
     values: [string, string]
   ): string;
@@ -97,36 +76,10 @@ interface SmtVestingInterface extends ethers.utils.Interface {
     functionFragment: "burnFrom",
     values: [string, BigNumberish]
   ): string;
-  encodeFunctionData(functionFragment: "claim", values: [BigNumberish]): string;
-  encodeFunctionData(
-    functionFragment: "claimMaximunAmount",
-    values?: undefined
-  ): string;
-  encodeFunctionData(functionFragment: "claimings", values: [string]): string;
-  encodeFunctionData(
-    functionFragment: "currentQuarterSinceStartTime",
-    values?: undefined
-  ): string;
   encodeFunctionData(functionFragment: "decimals", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "decreaseAllowance",
     values: [string, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "deposit",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "distributionStartTime",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getClaimableAmount",
-    values: [string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getCurrentLockedAmount",
-    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "getRoleAdmin",
@@ -167,14 +120,6 @@ interface SmtVestingInterface extends ethers.utils.Interface {
     functionFragment: "revokeRole",
     values: [BytesLike, string]
   ): string;
-  encodeFunctionData(
-    functionFragment: "setAcceptedToken",
-    values: [string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setStartTime",
-    values: [BigNumberish]
-  ): string;
   encodeFunctionData(functionFragment: "symbol", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "totalSupply",
@@ -189,7 +134,6 @@ interface SmtVestingInterface extends ethers.utils.Interface {
     values: [string, string, BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "unpause", values?: undefined): string;
-  encodeFunctionData(functionFragment: "whitelist", values: [string]): string;
 
   decodeFunctionResult(
     functionFragment: "DEFAULT_ADMIN_ROLE",
@@ -203,45 +147,14 @@ interface SmtVestingInterface extends ethers.utils.Interface {
     functionFragment: "PAUSER_ROLE",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "acceptedToken",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "addWhitelistedAddress",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "allowance", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "approve", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "burn", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "burnFrom", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "claim", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "claimMaximunAmount",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "claimings", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "currentQuarterSinceStartTime",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "decimals", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "decreaseAllowance",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "deposit", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "distributionStartTime",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getClaimableAmount",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getCurrentLockedAmount",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -271,14 +184,6 @@ interface SmtVestingInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "revokeRole", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "setAcceptedToken",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setStartTime",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "symbol", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "totalSupply",
@@ -290,34 +195,27 @@ interface SmtVestingInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "unpause", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "whitelist", data: BytesLike): Result;
 
   events: {
-    "AcceptedTokenSet(address)": EventFragment;
     "Approval(address,address,uint256)": EventFragment;
-    "Claim(address,uint256)": EventFragment;
     "Paused(address)": EventFragment;
     "RoleAdminChanged(bytes32,bytes32,bytes32)": EventFragment;
     "RoleGranted(bytes32,address,address)": EventFragment;
     "RoleRevoked(bytes32,address,address)": EventFragment;
-    "StartTimeSet(uint256)": EventFragment;
     "Transfer(address,address,uint256)": EventFragment;
     "Unpaused(address)": EventFragment;
   };
 
-  getEvent(nameOrSignatureOrTopic: "AcceptedTokenSet"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Approval"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Claim"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Paused"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleAdminChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleGranted"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleRevoked"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "StartTimeSet"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Transfer"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Unpaused"): EventFragment;
 }
 
-export class SmtVesting extends Contract {
+export class ERC20PresetMinterPauser extends Contract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
@@ -358,7 +256,7 @@ export class SmtVesting extends Contract {
     toBlock?: string | number | undefined
   ): Promise<Array<TypedEvent<EventArgsArray & EventArgsObject>>>;
 
-  interface: SmtVestingInterface;
+  interface: ERC20PresetMinterPauserInterface;
 
   functions: {
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<[string]>;
@@ -372,20 +270,6 @@ export class SmtVesting extends Contract {
     PAUSER_ROLE(overrides?: CallOverrides): Promise<[string]>;
 
     "PAUSER_ROLE()"(overrides?: CallOverrides): Promise<[string]>;
-
-    acceptedToken(overrides?: CallOverrides): Promise<[string]>;
-
-    "acceptedToken()"(overrides?: CallOverrides): Promise<[string]>;
-
-    addWhitelistedAddress(
-      _address: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    "addWhitelistedAddress(address)"(
-      _address: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
 
     allowance(
       owner: string,
@@ -440,39 +324,6 @@ export class SmtVesting extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    claim(
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    "claim(uint256)"(
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    claimMaximunAmount(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    "claimMaximunAmount()"(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    claimings(arg0: string, overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    "claimings(address)"(
-      arg0: string,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    currentQuarterSinceStartTime(
-      overrides?: CallOverrides
-    ): Promise<[BigNumber] & { currentQuarter: BigNumber }>;
-
-    "currentQuarterSinceStartTime()"(
-      overrides?: CallOverrides
-    ): Promise<[BigNumber] & { currentQuarter: BigNumber }>;
-
     decimals(overrides?: CallOverrides): Promise<[number]>;
 
     "decimals()"(overrides?: CallOverrides): Promise<[number]>;
@@ -488,34 +339,6 @@ export class SmtVesting extends Contract {
       subtractedValue: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
-
-    deposit(
-      _amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    "deposit(uint256)"(
-      _amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    distributionStartTime(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    "distributionStartTime()"(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    getClaimableAmount(
-      awarded: string,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber] & { amount: BigNumber }>;
-
-    "getClaimableAmount(address)"(
-      awarded: string,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber] & { amount: BigNumber }>;
-
-    getCurrentLockedAmount(overrides?: CallOverrides): Promise<[void]>;
-
-    "getCurrentLockedAmount()"(overrides?: CallOverrides): Promise<[void]>;
 
     getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<[string]>;
 
@@ -634,26 +457,6 @@ export class SmtVesting extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    setAcceptedToken(
-      _token: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    "setAcceptedToken(address)"(
-      _token: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    setStartTime(
-      startTime: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    "setStartTime(uint256)"(
-      startTime: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
     symbol(overrides?: CallOverrides): Promise<[string]>;
 
     "symbol()"(overrides?: CallOverrides): Promise<[string]>;
@@ -695,13 +498,6 @@ export class SmtVesting extends Contract {
     "unpause()"(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
-
-    whitelist(arg0: string, overrides?: CallOverrides): Promise<[boolean]>;
-
-    "whitelist(address)"(
-      arg0: string,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
   };
 
   DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
@@ -715,20 +511,6 @@ export class SmtVesting extends Contract {
   PAUSER_ROLE(overrides?: CallOverrides): Promise<string>;
 
   "PAUSER_ROLE()"(overrides?: CallOverrides): Promise<string>;
-
-  acceptedToken(overrides?: CallOverrides): Promise<string>;
-
-  "acceptedToken()"(overrides?: CallOverrides): Promise<string>;
-
-  addWhitelistedAddress(
-    _address: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  "addWhitelistedAddress(address)"(
-    _address: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
 
   allowance(
     owner: string,
@@ -783,37 +565,6 @@ export class SmtVesting extends Contract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  claim(
-    amount: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  "claim(uint256)"(
-    amount: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  claimMaximunAmount(
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  "claimMaximunAmount()"(
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  claimings(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
-
-  "claimings(address)"(
-    arg0: string,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  currentQuarterSinceStartTime(overrides?: CallOverrides): Promise<BigNumber>;
-
-  "currentQuarterSinceStartTime()"(
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
   decimals(overrides?: CallOverrides): Promise<number>;
 
   "decimals()"(overrides?: CallOverrides): Promise<number>;
@@ -829,34 +580,6 @@ export class SmtVesting extends Contract {
     subtractedValue: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
-
-  deposit(
-    _amount: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  "deposit(uint256)"(
-    _amount: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  distributionStartTime(overrides?: CallOverrides): Promise<BigNumber>;
-
-  "distributionStartTime()"(overrides?: CallOverrides): Promise<BigNumber>;
-
-  getClaimableAmount(
-    awarded: string,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  "getClaimableAmount(address)"(
-    awarded: string,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  getCurrentLockedAmount(overrides?: CallOverrides): Promise<void>;
-
-  "getCurrentLockedAmount()"(overrides?: CallOverrides): Promise<void>;
 
   getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<string>;
 
@@ -975,26 +698,6 @@ export class SmtVesting extends Contract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  setAcceptedToken(
-    _token: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  "setAcceptedToken(address)"(
-    _token: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  setStartTime(
-    startTime: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  "setStartTime(uint256)"(
-    startTime: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
   symbol(overrides?: CallOverrides): Promise<string>;
 
   "symbol()"(overrides?: CallOverrides): Promise<string>;
@@ -1037,13 +740,6 @@ export class SmtVesting extends Contract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  whitelist(arg0: string, overrides?: CallOverrides): Promise<boolean>;
-
-  "whitelist(address)"(
-    arg0: string,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
-
   callStatic: {
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
 
@@ -1056,20 +752,6 @@ export class SmtVesting extends Contract {
     PAUSER_ROLE(overrides?: CallOverrides): Promise<string>;
 
     "PAUSER_ROLE()"(overrides?: CallOverrides): Promise<string>;
-
-    acceptedToken(overrides?: CallOverrides): Promise<string>;
-
-    "acceptedToken()"(overrides?: CallOverrides): Promise<string>;
-
-    addWhitelistedAddress(
-      _address: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    "addWhitelistedAddress(address)"(
-      _address: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
 
     allowance(
       owner: string,
@@ -1121,30 +803,6 @@ export class SmtVesting extends Contract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    claim(amount: BigNumberish, overrides?: CallOverrides): Promise<void>;
-
-    "claim(uint256)"(
-      amount: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    claimMaximunAmount(overrides?: CallOverrides): Promise<void>;
-
-    "claimMaximunAmount()"(overrides?: CallOverrides): Promise<void>;
-
-    claimings(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
-
-    "claimings(address)"(
-      arg0: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    currentQuarterSinceStartTime(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "currentQuarterSinceStartTime()"(
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     decimals(overrides?: CallOverrides): Promise<number>;
 
     "decimals()"(overrides?: CallOverrides): Promise<number>;
@@ -1160,31 +818,6 @@ export class SmtVesting extends Contract {
       subtractedValue: BigNumberish,
       overrides?: CallOverrides
     ): Promise<boolean>;
-
-    deposit(_amount: BigNumberish, overrides?: CallOverrides): Promise<void>;
-
-    "deposit(uint256)"(
-      _amount: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    distributionStartTime(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "distributionStartTime()"(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getClaimableAmount(
-      awarded: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    "getClaimableAmount(address)"(
-      awarded: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    getCurrentLockedAmount(overrides?: CallOverrides): Promise<void>;
-
-    "getCurrentLockedAmount()"(overrides?: CallOverrides): Promise<void>;
 
     getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<string>;
 
@@ -1299,23 +932,6 @@ export class SmtVesting extends Contract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    setAcceptedToken(_token: string, overrides?: CallOverrides): Promise<void>;
-
-    "setAcceptedToken(address)"(
-      _token: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setStartTime(
-      startTime: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    "setStartTime(uint256)"(
-      startTime: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     symbol(overrides?: CallOverrides): Promise<string>;
 
     "symbol()"(overrides?: CallOverrides): Promise<string>;
@@ -1353,20 +969,9 @@ export class SmtVesting extends Contract {
     unpause(overrides?: CallOverrides): Promise<void>;
 
     "unpause()"(overrides?: CallOverrides): Promise<void>;
-
-    whitelist(arg0: string, overrides?: CallOverrides): Promise<boolean>;
-
-    "whitelist(address)"(
-      arg0: string,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
   };
 
   filters: {
-    AcceptedTokenSet(
-      _acceptedToken: null
-    ): TypedEventFilter<[string], { _acceptedToken: string }>;
-
     Approval(
       owner: string | null,
       spender: string | null,
@@ -1374,14 +979,6 @@ export class SmtVesting extends Contract {
     ): TypedEventFilter<
       [string, string, BigNumber],
       { owner: string; spender: string; value: BigNumber }
-    >;
-
-    Claim(
-      owner: string | null,
-      amount: null
-    ): TypedEventFilter<
-      [string, BigNumber],
-      { owner: string; amount: BigNumber }
     >;
 
     Paused(account: null): TypedEventFilter<[string], { account: string }>;
@@ -1413,10 +1010,6 @@ export class SmtVesting extends Contract {
       { role: string; account: string; sender: string }
     >;
 
-    StartTimeSet(
-      startTime: null
-    ): TypedEventFilter<[BigNumber], { startTime: BigNumber }>;
-
     Transfer(
       from: string | null,
       to: string | null,
@@ -1441,20 +1034,6 @@ export class SmtVesting extends Contract {
     PAUSER_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
 
     "PAUSER_ROLE()"(overrides?: CallOverrides): Promise<BigNumber>;
-
-    acceptedToken(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "acceptedToken()"(overrides?: CallOverrides): Promise<BigNumber>;
-
-    addWhitelistedAddress(
-      _address: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    "addWhitelistedAddress(address)"(
-      _address: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
 
     allowance(
       owner: string,
@@ -1509,37 +1088,6 @@ export class SmtVesting extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    claim(
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    "claim(uint256)"(
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    claimMaximunAmount(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    "claimMaximunAmount()"(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    claimings(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
-
-    "claimings(address)"(
-      arg0: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    currentQuarterSinceStartTime(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "currentQuarterSinceStartTime()"(
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     decimals(overrides?: CallOverrides): Promise<BigNumber>;
 
     "decimals()"(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1555,34 +1103,6 @@ export class SmtVesting extends Contract {
       subtractedValue: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
-
-    deposit(
-      _amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    "deposit(uint256)"(
-      _amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    distributionStartTime(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "distributionStartTime()"(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getClaimableAmount(
-      awarded: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    "getClaimableAmount(address)"(
-      awarded: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    getCurrentLockedAmount(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "getCurrentLockedAmount()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     getRoleAdmin(
       role: BytesLike,
@@ -1704,26 +1224,6 @@ export class SmtVesting extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    setAcceptedToken(
-      _token: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    "setAcceptedToken(address)"(
-      _token: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    setStartTime(
-      startTime: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    "setStartTime(uint256)"(
-      startTime: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
     symbol(overrides?: CallOverrides): Promise<BigNumber>;
 
     "symbol()"(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1765,13 +1265,6 @@ export class SmtVesting extends Contract {
     "unpause()"(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
-
-    whitelist(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
-
-    "whitelist(address)"(
-      arg0: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -1790,20 +1283,6 @@ export class SmtVesting extends Contract {
     PAUSER_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "PAUSER_ROLE()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    acceptedToken(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    "acceptedToken()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    addWhitelistedAddress(
-      _address: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    "addWhitelistedAddress(address)"(
-      _address: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
 
     allowance(
       owner: string,
@@ -1861,42 +1340,6 @@ export class SmtVesting extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    claim(
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    "claim(uint256)"(
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    claimMaximunAmount(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    "claimMaximunAmount()"(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    claimings(
-      arg0: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    "claimings(address)"(
-      arg0: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    currentQuarterSinceStartTime(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    "currentQuarterSinceStartTime()"(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     decimals(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "decimals()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -1911,42 +1354,6 @@ export class SmtVesting extends Contract {
       spender: string,
       subtractedValue: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    deposit(
-      _amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    "deposit(uint256)"(
-      _amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    distributionStartTime(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    "distributionStartTime()"(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    getClaimableAmount(
-      awarded: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    "getClaimableAmount(address)"(
-      awarded: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    getCurrentLockedAmount(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    "getCurrentLockedAmount()"(
-      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     getRoleAdmin(
@@ -2069,26 +1476,6 @@ export class SmtVesting extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    setAcceptedToken(
-      _token: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    "setAcceptedToken(address)"(
-      _token: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    setStartTime(
-      startTime: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    "setStartTime(uint256)"(
-      startTime: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
     symbol(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "symbol()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -2129,16 +1516,6 @@ export class SmtVesting extends Contract {
 
     "unpause()"(
       overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    whitelist(
-      arg0: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    "whitelist(address)"(
-      arg0: string,
-      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
   };
 }
