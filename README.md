@@ -8,6 +8,15 @@
 
 ## Addresses
 
+### Mainnet
+
+- **SwarmMarketsToken**: `0x2E376EFc7202287c169D127fcaDF069e4227456d`
+- **SmtDistributor**: `0x241a9843611EEe430E4847B99Df2966d230eC8C0`
+- **SmtVesting**: `0xF67506e32Fefd2597FCbD2F5d3A5B7a73873F58A`
+
+- [Deployment artifacts](deloyment/mainnet.json)
+
+
 ### Kovan
 
 - **SwarmMarketsToken**: `0x5a4eada4ca02eBC6B8daF9d7d3fE1D4A280C9318`

@@ -25,7 +25,7 @@ describe('SwarmMarketsToken contract', function () {
   });
 
   it('should be deployed with the right setup', async () => {
-    expect(await SMTContract.name()).to.eq('Swarm Markets Token');
+    expect(await SMTContract.name()).to.eq('Swarm Markets');
     expect(await SMTContract.symbol()).to.eq('SMT');
     expect(await SMTContract.decimals()).to.eq(18);
     expect(await SMTContract.totalSupply()).to.eq(tokenSupply);

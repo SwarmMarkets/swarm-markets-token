@@ -5,6 +5,7 @@
   "main": "index.js",
   "license": "MIT",
   "devDependencies": {
+    "@chainlink/contracts": "^0.1.6",
     "@nomiclabs/hardhat-ethers": "^2.0.2",
     "@nomiclabs/hardhat-etherscan": "^2.1.1",
     "@nomiclabs/hardhat-solhint": "^2.0.0",
@@ -73,6 +74,8 @@
     "verify:kovan": "hardhat run --network kovan scripts/verify.ts",
     "deploy:rinkeby": "hardhat run --network rinkeby scripts/deploy.ts",
     "verify:rinkeby": "hardhat run --network rinkeby scripts/verify.ts",
+    "deploy:mainnet": "hardhat run --network mainnet scripts/deploy.ts",
+    "verify:mainnet": "hardhat run --network mainnet scripts/verify.ts",
     "size": "hardhat size-contracts"
   },
   "husky": {

@@ -15,20 +15,20 @@ async function main(): Promise<void> {
     // SwarmMarketsToken
     await hre.run('verify:verify', {
       address: deploymentData.SwarmMarketsToken.address,
-      constructorArguments: [deploymentData.SmtVesting.address],
+      constructorArguments: [process.env.TREASURY_ACCOUNT],
       contract: 'contracts/SwarmMarketsToken.sol:SwarmMarketsToken',
     });
 
-    // SmtVesting
+    // SmtPriceFeed
     await hre.run('verify:verify', {
-      address: deploymentData.SmtVesting.address,
-      constructorArguments: [],
-    });
-
-    // SmtDistributor
-    await hre.run('verify:verify', {
-      address: deploymentData.SmtDistributor.address,
-      constructorArguments: [deploymentData.SwarmMarketsToken.address, process.env.TREASURY_ACCOUNT],
+      address: deploymentData.SmtPriceFeed.address,
+      constructorArguments: [
+        process.env.BREGISTRY,
+        process.env.EUR_USD_FEED,
+        deploymentData.SwarmMarketsToken.address,
+        process.env.XTOKENWRAPPER,
+      ],
+      contract: 'contracts/SmtPriceFeed.sol:SmtPriceFeed',
     });
   }
 }
