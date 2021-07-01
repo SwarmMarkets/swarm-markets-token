@@ -22,6 +22,7 @@ import { TypedEventFilter, TypedEvent, TypedListener } from "./commons";
 interface SmtVestingInterface extends ethers.utils.Interface {
   functions: {
     "DEFAULT_ADMIN_ROLE()": FunctionFragment;
+    "KYA()": FunctionFragment;
     "MINTER_ROLE()": FunctionFragment;
     "PAUSER_ROLE()": FunctionFragment;
     "acceptedToken()": FunctionFragment;
@@ -54,6 +55,7 @@ interface SmtVestingInterface extends ethers.utils.Interface {
     "renounceRole(bytes32,address)": FunctionFragment;
     "revokeRole(bytes32,address)": FunctionFragment;
     "setAcceptedToken(address)": FunctionFragment;
+    "setKYA(string)": FunctionFragment;
     "setStartTime(uint256)": FunctionFragment;
     "symbol()": FunctionFragment;
     "totalSupply()": FunctionFragment;
@@ -67,6 +69,7 @@ interface SmtVestingInterface extends ethers.utils.Interface {
     functionFragment: "DEFAULT_ADMIN_ROLE",
     values?: undefined
   ): string;
+  encodeFunctionData(functionFragment: "KYA", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "MINTER_ROLE",
     values?: undefined
@@ -171,6 +174,7 @@ interface SmtVestingInterface extends ethers.utils.Interface {
     functionFragment: "setAcceptedToken",
     values: [string]
   ): string;
+  encodeFunctionData(functionFragment: "setKYA", values: [string]): string;
   encodeFunctionData(
     functionFragment: "setStartTime",
     values: [BigNumberish]
@@ -195,6 +199,7 @@ interface SmtVestingInterface extends ethers.utils.Interface {
     functionFragment: "DEFAULT_ADMIN_ROLE",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "KYA", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "MINTER_ROLE",
     data: BytesLike
@@ -275,6 +280,7 @@ interface SmtVestingInterface extends ethers.utils.Interface {
     functionFragment: "setAcceptedToken",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "setKYA", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "setStartTime",
     data: BytesLike
@@ -364,6 +370,10 @@ export class SmtVesting extends Contract {
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<[string]>;
 
     "DEFAULT_ADMIN_ROLE()"(overrides?: CallOverrides): Promise<[string]>;
+
+    KYA(overrides?: CallOverrides): Promise<[string]>;
+
+    "KYA()"(overrides?: CallOverrides): Promise<[string]>;
 
     MINTER_ROLE(overrides?: CallOverrides): Promise<[string]>;
 
@@ -644,6 +654,16 @@ export class SmtVesting extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    setKYA(
+      _knowYourAsset: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    "setKYA(string)"(
+      _knowYourAsset: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     setStartTime(
       startTime: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -707,6 +727,10 @@ export class SmtVesting extends Contract {
   DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
 
   "DEFAULT_ADMIN_ROLE()"(overrides?: CallOverrides): Promise<string>;
+
+  KYA(overrides?: CallOverrides): Promise<string>;
+
+  "KYA()"(overrides?: CallOverrides): Promise<string>;
 
   MINTER_ROLE(overrides?: CallOverrides): Promise<string>;
 
@@ -985,6 +1009,16 @@ export class SmtVesting extends Contract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  setKYA(
+    _knowYourAsset: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  "setKYA(string)"(
+    _knowYourAsset: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   setStartTime(
     startTime: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
@@ -1048,6 +1082,10 @@ export class SmtVesting extends Contract {
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
 
     "DEFAULT_ADMIN_ROLE()"(overrides?: CallOverrides): Promise<string>;
+
+    KYA(overrides?: CallOverrides): Promise<string>;
+
+    "KYA()"(overrides?: CallOverrides): Promise<string>;
 
     MINTER_ROLE(overrides?: CallOverrides): Promise<string>;
 
@@ -1306,6 +1344,13 @@ export class SmtVesting extends Contract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    setKYA(_knowYourAsset: string, overrides?: CallOverrides): Promise<void>;
+
+    "setKYA(string)"(
+      _knowYourAsset: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     setStartTime(
       startTime: BigNumberish,
       overrides?: CallOverrides
@@ -1433,6 +1478,10 @@ export class SmtVesting extends Contract {
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
 
     "DEFAULT_ADMIN_ROLE()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    KYA(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "KYA()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     MINTER_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1714,6 +1763,16 @@ export class SmtVesting extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    setKYA(
+      _knowYourAsset: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    "setKYA(string)"(
+      _knowYourAsset: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     setStartTime(
       startTime: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -1782,6 +1841,10 @@ export class SmtVesting extends Contract {
     "DEFAULT_ADMIN_ROLE()"(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
+
+    KYA(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "KYA()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     MINTER_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
@@ -2076,6 +2139,16 @@ export class SmtVesting extends Contract {
 
     "setAcceptedToken(address)"(
       _token: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setKYA(
+      _knowYourAsset: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "setKYA(string)"(
+      _knowYourAsset: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 

@@ -28,7 +28,7 @@ async function main(): Promise<void> {
   if (process.env.TREASURY_ACCOUNT) {
     startLog('Deploying SmtVesting contract');
     const SmtVestingFactory: ContractFactory = await ethers.getContractFactory('SmtVesting');
-    const SmtVestingContract: SmtVesting = (await SmtVestingFactory.deploy("Vestin Swarm Markets Token","vSMT")) as SmtVesting;
+    const SmtVestingContract: SmtVesting = (await SmtVestingFactory.deploy("Vesting Swarm Markets Token","vSMT")) as SmtVesting;
     updatetLog(`Deploying SmtVesting contract - txHash: ${SmtVestingContract.deployTransaction.hash}`);
     await SmtVestingContract.deployed();
 

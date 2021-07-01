@@ -16,8 +16,12 @@ contract SmtVesting is ERC20PresetMinterPauser {
     /// @dev distribution start timestamp
     uint256 public distributionStartTime;
 
+    /// @dev Know Your Asset
+    string public KYA;
+
     // @dev time constants
-    uint256 private constant SECONDS_IN_QUARTER = 7889238; // 60×60×24×30,436875*3 = 7889238  number of seconds in one quarter
+    uint256 private constant SECONDS_IN_QUARTER = 7889238; // 60*60*24×30,436875*3 = 7889238  number of seconds in one quarter
+    uint256 private constant SECONDS_IN_12HOURS = 43200; // 60*60*12
 
     /// @dev trasnferable addresses whitelist
     mapping (address => bool) public whitelist;
@@ -60,6 +64,11 @@ contract SmtVesting is ERC20PresetMinterPauser {
         acceptedToken.balanceOf(address(this));
     }
 
+    function setKYA(string calldata _knowYourAsset) public {
+        require(hasRole(DEFAULT_ADMIN_ROLE, _msgSender()), "must have DEFAULT_ADMIN_ROLE");
+        KYA = _knowYourAsset;
+    }
+
     function addWhitelistedAddress(address _address) external {
         require(hasRole(DEFAULT_ADMIN_ROLE, _msgSender()), "must have DEFAULT_ADMIN_ROLE");
         whitelist[_address] = true;
@@ -71,7 +80,7 @@ contract SmtVesting is ERC20PresetMinterPauser {
         uint256 claimableAmount = getClaimableAmount(_msgSender());
         require(claimableAmount>=amount, "amount too big");
         acceptedToken.transfer(_msgSender(), amount);
-        burnFrom(_msgSender(), amount);
+        _burn(_msgSender(), amount);
 
         claimings[_msgSender()] = claimings[_msgSender()].add(amount);
         emit Claim(_msgSender(), amount);
@@ -109,7 +118,7 @@ contract SmtVesting is ERC20PresetMinterPauser {
 
         require(distributionStartTime!=0, "Starttime not set");
 
-        return (block.timestamp.sub(distributionStartTime)).div(SECONDS_IN_QUARTER);
+        return (block.timestamp.sub(distributionStartTime)).div(SECONDS_IN_12HOURS);
     }
     
     // set Unix timestamp format, must be a bigger than current block timestamp
