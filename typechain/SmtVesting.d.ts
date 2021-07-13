@@ -309,6 +309,7 @@ interface SmtVestingInterface extends ethers.utils.Interface {
     "StartTimeSet(uint256)": EventFragment;
     "Transfer(address,address,uint256)": EventFragment;
     "Unpaused(address)": EventFragment;
+    "WhitelistedAddress(address)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "AcceptedTokenSet"): EventFragment;
@@ -321,6 +322,7 @@ interface SmtVestingInterface extends ethers.utils.Interface {
   getEvent(nameOrSignatureOrTopic: "StartTimeSet"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Transfer"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Unpaused"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "WhitelistedAddress"): EventFragment;
 }
 
 export class SmtVesting extends Contract {
@@ -428,27 +430,24 @@ export class SmtVesting extends Contract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
-    burn(
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+    burn(amount: BigNumberish, overrides?: CallOverrides): Promise<[void]>;
 
     "burn(uint256)"(
       amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+      overrides?: CallOverrides
+    ): Promise<[void]>;
 
     burnFrom(
       account: string,
       amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+      overrides?: CallOverrides
+    ): Promise<[void]>;
 
     "burnFrom(address,uint256)"(
       account: string,
       amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+      overrides?: CallOverrides
+    ): Promise<[void]>;
 
     claim(
       amount: BigNumberish,
@@ -595,14 +594,14 @@ export class SmtVesting extends Contract {
     mint(
       to: string,
       amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+      overrides?: CallOverrides
+    ): Promise<[void]>;
 
     "mint(address,uint256)"(
       to: string,
       amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+      overrides?: CallOverrides
+    ): Promise<[void]>;
 
     name(overrides?: CallOverrides): Promise<[string]>;
 
@@ -785,27 +784,24 @@ export class SmtVesting extends Contract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  burn(
-    amount: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+  burn(amount: BigNumberish, overrides?: CallOverrides): Promise<void>;
 
   "burn(uint256)"(
     amount: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+    overrides?: CallOverrides
+  ): Promise<void>;
 
   burnFrom(
     account: string,
     amount: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+    overrides?: CallOverrides
+  ): Promise<void>;
 
   "burnFrom(address,uint256)"(
     account: string,
     amount: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+    overrides?: CallOverrides
+  ): Promise<void>;
 
   claim(
     amount: BigNumberish,
@@ -950,14 +946,14 @@ export class SmtVesting extends Contract {
   mint(
     to: string,
     amount: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+    overrides?: CallOverrides
+  ): Promise<void>;
 
   "mint(address,uint256)"(
     to: string,
     amount: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+    overrides?: CallOverrides
+  ): Promise<void>;
 
   name(overrides?: CallOverrides): Promise<string>;
 
@@ -1472,6 +1468,10 @@ export class SmtVesting extends Contract {
     >;
 
     Unpaused(account: null): TypedEventFilter<[string], { account: string }>;
+
+    WhitelistedAddress(
+      whitelisted: null
+    ): TypedEventFilter<[string], { whitelisted: string }>;
   };
 
   estimateGas: {
@@ -1536,26 +1536,23 @@ export class SmtVesting extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    burn(
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
+    burn(amount: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
 
     "burn(uint256)"(
       amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     burnFrom(
       account: string,
       amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     "burnFrom(address,uint256)"(
       account: string,
       amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     claim(
@@ -1704,13 +1701,13 @@ export class SmtVesting extends Contract {
     mint(
       to: string,
       amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     "mint(address,uint256)"(
       to: string,
       amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     name(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1904,24 +1901,24 @@ export class SmtVesting extends Contract {
 
     burn(
       amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     "burn(uint256)"(
       amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     burnFrom(
       account: string,
       amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     "burnFrom(address,uint256)"(
       account: string,
       amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     claim(
@@ -2083,13 +2080,13 @@ export class SmtVesting extends Contract {
     mint(
       to: string,
       amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     "mint(address,uint256)"(
       to: string,
       amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     name(overrides?: CallOverrides): Promise<PopulatedTransaction>;
