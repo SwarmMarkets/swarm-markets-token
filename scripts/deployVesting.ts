@@ -54,11 +54,13 @@ async function main(): Promise<void> {
     stopLog(`Done setting SmtVesting accepted token - txHash: ${piaTx.hash}`);
 
     // Transfer SmtVesting ownership
+    /*
     startLog('Add TREASURY_ACCOUNT to whitelist');
     const toTx = await SmtVestingContract.addWhitelistedAddress(process.env.TREASURY_ACCOUNT);
     updatetLog(`Add TREASURY_ACCOUNT to whitelist - txHash: ${toTx.hash}`);
     await toTx.wait();
     stopLog(`Done Add TREASURY_ACCOUNT to whitelist - txHash: ${toTx.hash}`);
+    */
   }
 }
 
