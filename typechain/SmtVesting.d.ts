@@ -522,9 +522,13 @@ export class SmtVesting extends Contract {
       overrides?: CallOverrides
     ): Promise<[BigNumber] & { amount: BigNumber }>;
 
-    getCurrentLockedAmount(overrides?: CallOverrides): Promise<[void]>;
+    getCurrentLockedAmount(
+      overrides?: CallOverrides
+    ): Promise<[BigNumber] & { balanceOfAcceptedToken: BigNumber }>;
 
-    "getCurrentLockedAmount()"(overrides?: CallOverrides): Promise<[void]>;
+    "getCurrentLockedAmount()"(
+      overrides?: CallOverrides
+    ): Promise<[BigNumber] & { balanceOfAcceptedToken: BigNumber }>;
 
     getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<[string]>;
 
@@ -874,9 +878,9 @@ export class SmtVesting extends Contract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  getCurrentLockedAmount(overrides?: CallOverrides): Promise<void>;
+  getCurrentLockedAmount(overrides?: CallOverrides): Promise<BigNumber>;
 
-  "getCurrentLockedAmount()"(overrides?: CallOverrides): Promise<void>;
+  "getCurrentLockedAmount()"(overrides?: CallOverrides): Promise<BigNumber>;
 
   getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<string>;
 
@@ -1216,9 +1220,9 @@ export class SmtVesting extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    getCurrentLockedAmount(overrides?: CallOverrides): Promise<void>;
+    getCurrentLockedAmount(overrides?: CallOverrides): Promise<BigNumber>;
 
-    "getCurrentLockedAmount()"(overrides?: CallOverrides): Promise<void>;
+    "getCurrentLockedAmount()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<string>;
 

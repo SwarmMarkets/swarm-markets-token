@@ -6,7 +6,7 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/presets/ERC20PresetMinterPauser.sol";
 
 /**
- * @title SmtPriceFeed
+ * @title SmtVesting
  * @author Protofire
  * @dev Contract module used to lock SMT during Vesting period.
  */
@@ -26,7 +26,7 @@ contract SmtVesting is ERC20PresetMinterPauser {
     /// @dev time constants
     uint256 private constant SECONDS_IN_QUARTER = 7889238; // 60*60*24×30,436875*3 = 7889238  number of seconds in one quarter
    // uint256 private constant SECONDS_IN_12HOURS = 43200; // 60*60*12
-   // uint256 private constant SECONDS_IN_5_MINUTES = 300; // 60*5
+    uint256 private constant SECONDS_IN_15_MINUTES = 900; // 60*15
 
 
     /// @dev trasnferable addresses whitelist
@@ -94,10 +94,10 @@ contract SmtVesting is ERC20PresetMinterPauser {
 
     /**
      * @dev check funds locked by this contract in terms of acceptedToken's balance
-     *
+     * should be alkways equal to totalSupply, usefull as a doublecheck control
      */
-    function getCurrentLockedAmount() external view {
-        acceptedToken.balanceOf(address(this));
+    function getCurrentLockedAmount() external view returns (uint256 balanceOfAcceptedToken) {
+        return acceptedToken.balanceOf(address(this));
     }
 
     /**
@@ -141,7 +141,7 @@ contract SmtVesting is ERC20PresetMinterPauser {
      * - `_address` can not be zero address
      */
     function claim (uint256 amount) public {
-        require(distributionStartTime!=0, "Starttime not set");
+        require(distributionStartTime!=0, "distributionStartTime not set");
         uint256 claimableAmount = getClaimableAmount(_msgSender());
         require(claimableAmount>=amount, "amount too big");
         acceptedToken.transfer(_msgSender(), amount);
@@ -159,7 +159,7 @@ contract SmtVesting is ERC20PresetMinterPauser {
         revert("Minting is only allowed using deposit function");
     }
      /**
-     * @dev burning directly is disallowed `amount`
+     * @dev burning directly is disallowed
      * 
      */
     function burn(uint256 amount) public pure override {
@@ -170,7 +170,7 @@ contract SmtVesting is ERC20PresetMinterPauser {
     }
     /**
      * @dev only whitelisted address are allowed to transfer this token's ownership
-     * address 0x0 are allowed by default cause we need to burn and mint tokens
+     * - address 0x0 are allowed by default cause we need to burn and mint tokens
      */
     function _beforeTokenTransfer(address from, address to, uint256 amount) internal virtual override {
         super._beforeTokenTransfer(from, to, amount);
@@ -196,10 +196,11 @@ contract SmtVesting is ERC20PresetMinterPauser {
      * Requirements:
      *
      * - distributionStartTime must be different from 0
+     * - if distributionStartTime os differenct in grater than current timestamp, this function reverts
      */
     function getClaimableAmount(address awarded) public view returns (uint256 amount) {
 
-        require(distributionStartTime!=0, "Starttime not set");
+        require(distributionStartTime!=0, "distributionSartTime not set");
 
         uint256 currentQuarter = currentQuarterSinceStartTime();
         uint256 balanceOnAuction = balanceOf(awarded).add(claimings[awarded]);
@@ -226,9 +227,9 @@ contract SmtVesting is ERC20PresetMinterPauser {
      */
     function currentQuarterSinceStartTime() public view returns (uint256 currentQuarter){
 
-        require(distributionStartTime!=0, "distributionStartTime not set yet");
+        require(distributionStartTime!=0, "distributionStartTime not set");
         require(distributionStartTime<block.timestamp,  "Vesting did not start yet");
-        return (block.timestamp.sub(distributionStartTime)).div(SECONDS_IN_QUARTER);
+        return (block.timestamp.sub(distributionStartTime)).div(SECONDS_IN_15_MINUTES);
     }
     
     /**
