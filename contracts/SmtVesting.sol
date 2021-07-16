@@ -26,7 +26,7 @@ contract SmtVesting is ERC20PresetMinterPauser {
     /// @dev time constants
     uint256 private constant SECONDS_IN_QUARTER = 7889238; // 60*60*24×30,436875*3 = 7889238  number of seconds in one quarter
    // uint256 private constant SECONDS_IN_12HOURS = 43200; // 60*60*12
-    uint256 private constant SECONDS_IN_15_MINUTES = 900; // 60*15
+   // uint256 private constant SECONDS_IN_15_MINUTES = 900; // 60*15
 
 
     /// @dev trasnferable addresses whitelist
@@ -229,7 +229,7 @@ contract SmtVesting is ERC20PresetMinterPauser {
 
         require(distributionStartTime!=0, "distributionStartTime not set");
         require(distributionStartTime<block.timestamp,  "Vesting did not start yet");
-        return (block.timestamp.sub(distributionStartTime)).div(SECONDS_IN_15_MINUTES);
+        return (block.timestamp.sub(distributionStartTime)).div(SECONDS_IN_QUARTER);
     }
     
     /**
