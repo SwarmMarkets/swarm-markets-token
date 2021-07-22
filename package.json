@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "Swarm Markets Utility Token - SMT",
   "main": "index.js",
-  "license": "MIT",
+  "license": "GPL-3.0-only",
   "devDependencies": {
     "@chainlink/contracts": "^0.1.6",
     "@nomiclabs/hardhat-ethers": "^2.0.2",
