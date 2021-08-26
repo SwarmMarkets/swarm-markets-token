@@ -212,6 +212,11 @@ contract SmtPriceFeed is Ownable {
         address xSMT = xTokenWrapper.tokenToXToken(smt);
         address xETH = xTokenWrapper.tokenToXToken(ETH_TOKEN_ADDRESS);
 
+        //if same token, didn't modify the token amount
+        if (_asset == xSMT) {
+            return _assetAmountIn;
+        }
+        
         // get amount from some of the pools
         uint256 amount = getAvgAmountFromPools(_asset, xSMT, _assetAmountIn);
 
