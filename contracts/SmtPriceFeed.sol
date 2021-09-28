@@ -26,7 +26,7 @@ contract SmtPriceFeed is Ownable {
 
     uint256 public constant decimals = 18;
     uint256 public constant ONE = 10**18;
-    address public constant ETH_TOKEN_ADDRESS = address(0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE);
+    address public immutable WETH_ADDRESS;
 
     /// @dev Address smt
     address public smt;
@@ -67,12 +67,14 @@ contract SmtPriceFeed is Ownable {
         address _registry,
         address _eurPriceFeed,
         address _smt,
-        address _xTokenWrapper
+        address _xTokenWrapper,
+        address _wethAddress
     ) {
         _setRegistry(_registry);
         _setEurPriceFeed(_eurPriceFeed);
         _setSmt(_smt);
         _setXTokenWrapper(_xTokenWrapper);
+        WETH_ADDRESS = _wethAddress;
     }
 
     /**
@@ -210,7 +212,7 @@ contract SmtPriceFeed is Ownable {
     function calculateAmount(address _asset, uint256 _assetAmountIn) public view returns (uint256) {
         // pools will include the wrapepd SMT
         address xSMT = xTokenWrapper.tokenToXToken(smt);
-        address xETH = xTokenWrapper.tokenToXToken(ETH_TOKEN_ADDRESS);
+        address xETH = xTokenWrapper.tokenToXToken(WETH_ADDRESS);
 
         //if same token, didn't modify the token amount
         if (_asset == xSMT) {
@@ -252,7 +254,7 @@ contract SmtPriceFeed is Ownable {
         uint256 price =
             getAvgAmountFromPools(
                 xTokenWrapper.tokenToXToken(smt),
-                xTokenWrapper.tokenToXToken(ETH_TOKEN_ADDRESS),
+                xTokenWrapper.tokenToXToken(WETH_ADDRESS),
                 ONE
             );
 
