@@ -21,8 +21,8 @@ import { TypedEventFilter, TypedEvent, TypedListener } from "./commons";
 
 interface SmtPriceFeedInterface extends ethers.utils.Interface {
   functions: {
-    "ETH_TOKEN_ADDRESS()": FunctionFragment;
     "ONE()": FunctionFragment;
+    "WETH_ADDRESS()": FunctionFragment;
     "calculateAmount(address,uint256)": FunctionFragment;
     "decimals()": FunctionFragment;
     "eurPriceFeed()": FunctionFragment;
@@ -40,11 +40,11 @@ interface SmtPriceFeedInterface extends ethers.utils.Interface {
     "xTokenWrapper()": FunctionFragment;
   };
 
+  encodeFunctionData(functionFragment: "ONE", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "ETH_TOKEN_ADDRESS",
+    functionFragment: "WETH_ADDRESS",
     values?: undefined
   ): string;
-  encodeFunctionData(functionFragment: "ONE", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "calculateAmount",
     values: [string, BigNumberish]
@@ -85,11 +85,11 @@ interface SmtPriceFeedInterface extends ethers.utils.Interface {
     values?: undefined
   ): string;
 
+  decodeFunctionResult(functionFragment: "ONE", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "ETH_TOKEN_ADDRESS",
+    functionFragment: "WETH_ADDRESS",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "ONE", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "calculateAmount",
     data: BytesLike
@@ -192,13 +192,13 @@ export class SmtPriceFeed extends Contract {
   interface: SmtPriceFeedInterface;
 
   functions: {
-    ETH_TOKEN_ADDRESS(overrides?: CallOverrides): Promise<[string]>;
-
-    "ETH_TOKEN_ADDRESS()"(overrides?: CallOverrides): Promise<[string]>;
-
     ONE(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     "ONE()"(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    WETH_ADDRESS(overrides?: CallOverrides): Promise<[string]>;
+
+    "WETH_ADDRESS()"(overrides?: CallOverrides): Promise<[string]>;
 
     calculateAmount(
       _asset: string,
@@ -306,13 +306,13 @@ export class SmtPriceFeed extends Contract {
     "xTokenWrapper()"(overrides?: CallOverrides): Promise<[string]>;
   };
 
-  ETH_TOKEN_ADDRESS(overrides?: CallOverrides): Promise<string>;
-
-  "ETH_TOKEN_ADDRESS()"(overrides?: CallOverrides): Promise<string>;
-
   ONE(overrides?: CallOverrides): Promise<BigNumber>;
 
   "ONE()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+  WETH_ADDRESS(overrides?: CallOverrides): Promise<string>;
+
+  "WETH_ADDRESS()"(overrides?: CallOverrides): Promise<string>;
 
   calculateAmount(
     _asset: string,
@@ -420,13 +420,13 @@ export class SmtPriceFeed extends Contract {
   "xTokenWrapper()"(overrides?: CallOverrides): Promise<string>;
 
   callStatic: {
-    ETH_TOKEN_ADDRESS(overrides?: CallOverrides): Promise<string>;
-
-    "ETH_TOKEN_ADDRESS()"(overrides?: CallOverrides): Promise<string>;
-
     ONE(overrides?: CallOverrides): Promise<BigNumber>;
 
     "ONE()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    WETH_ADDRESS(overrides?: CallOverrides): Promise<string>;
+
+    "WETH_ADDRESS()"(overrides?: CallOverrides): Promise<string>;
 
     calculateAmount(
       _asset: string,
@@ -546,13 +546,13 @@ export class SmtPriceFeed extends Contract {
   };
 
   estimateGas: {
-    ETH_TOKEN_ADDRESS(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "ETH_TOKEN_ADDRESS()"(overrides?: CallOverrides): Promise<BigNumber>;
-
     ONE(overrides?: CallOverrides): Promise<BigNumber>;
 
     "ONE()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    WETH_ADDRESS(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "WETH_ADDRESS()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     calculateAmount(
       _asset: string,
@@ -661,15 +661,13 @@ export class SmtPriceFeed extends Contract {
   };
 
   populateTransaction: {
-    ETH_TOKEN_ADDRESS(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    "ETH_TOKEN_ADDRESS()"(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     ONE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "ONE()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    WETH_ADDRESS(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "WETH_ADDRESS()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     calculateAmount(
       _asset: string,
