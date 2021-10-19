@@ -7,12 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased 
 ### Added
-- Added GPL-3 license
 ### Changed
 ### Deprecated
 ### Removed
 ### Fixed
 ### Security
+
+## V1.1.0
+### Added
+- [GPL-3 license](https://github.com/SwarmMarkets/swarm-markets-token/commit/ea7874552f617f65115c5efa729e5a5b344adc5f)
+
+### Changed
+- [Updated tests to use a configurable address](https://github.com/SwarmMarkets/swarm-markets-token/commit/86e5aeedf4cc0c50578ed4100abafc7c9a6ac1dc)
+- [Contract uses the WETH address](https://github.com/SwarmMarkets/swarm-markets-token/commit/0b90815e4993d791183eff77720092e67149af9e)
+- [Updated smtpricefeed to rinkeby](https://github.com/SwarmMarkets/swarm-markets-token/commit/9e9115ab9bd7f5add786a98df212a31cb1250db6)
 
 ## V1.0.0
 ### Added
