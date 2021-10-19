@@ -63,6 +63,7 @@ async function main(): Promise<void> {
       process.env.EUR_USD_FEED,
       swarmMarketsToken.address,
       process.env.XTOKENWRAPPER,
+      process.env.WETH_TOKEN,
     )) as SmtPriceFeed;
     updatetLog(`Deploying smtPriceFeed contract - txHash: ${smtPriceFeed.deployTransaction.hash}`);
     await smtPriceFeed.deployed();

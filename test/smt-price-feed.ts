@@ -83,6 +83,7 @@ describe('SmtPriceFeed contract', function () {
       eurPriceFeedContract.address,
       smtContract.address,
       xTokenWrapperContract.address,
+      '0x70e1f7aa3f4241d938e3ec487fde58a6a39763ea' // weth on rinkeby, the actual value doesnt matter
     )) as SmtPriceFeed;
     await smtPriceFeedContract.deployed();
 
@@ -100,8 +101,8 @@ describe('SmtPriceFeed contract', function () {
     await eurPriceFeedContract.setAssetEthFeed(xToken.address, usdcEthFeedContract.address);
 
     await xTokenWrapperContract.setTokenToXToken(
-      '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
-      '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
+      '0x70e1f7aa3f4241d938e3ec487fde58a6a39763ea',
+      '0x70e1f7aa3f4241d938e3ec487fde58a6a39763ea',
     );
     await xTokenWrapperContract.setTokenToXToken(smtContract.address, xSMT.address);
 
@@ -271,7 +272,7 @@ describe('SmtPriceFeed contract', function () {
         expect(
           (
             await bRegistryContract.getBestPoolsWithLimit(
-              '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
+              '0x70e1f7aa3f4241d938e3ec487fde58a6a39763ea',
               ethers.constants.AddressZero,
               0,
             )
@@ -328,7 +329,7 @@ describe('SmtPriceFeed contract', function () {
         expect(
           (
             await bRegistryContract.getBestPoolsWithLimit(
-              '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
+              '0x70e1f7aa3f4241d938e3ec487fde58a6a39763ea',
               ethers.constants.AddressZero,
               0,
             )
