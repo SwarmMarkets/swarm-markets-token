@@ -15,79 +15,72 @@ import 'hardhat-gas-reporter';
 import 'hardhat-contract-sizer';
 import '@nomiclabs/hardhat-etherscan';
 
-const chainIds = {
-  ganache: 1337,
-  goerli: 5,
-  hardhat: 31337,
-  kovan: 42,
-  mainnet: 1,
-  rinkeby: 4,
-  ropsten: 3,
-};
-
 // Ensure that we have all the environment variables we need.
-let mnemonic: string;
-if (!process.env.MNEMONIC) {
-  throw new Error('Please set your MNEMONIC in a .env file');
-} else {
-  mnemonic = process.env.MNEMONIC;
-}
+const mnemonic = process.env.MNEMONIC || '';
+const swarmx_privateKey = process.env.SWARMX_DEPLOYER_PK || '';
+const testnet_privateKey = process.env.TESTNET_DEPLOYER_PK || '';
 
-// let mnemonic: string;
-// if (!process.env.MNEMONIC) {
-//   throw new Error('Please set your MNEMONIC in a .env file');
-// } else {
-//   mnemonic = process.env.MNEMONIC;
-// }
+const etherscanKey = process.env.ETHSCAN_KEY || '';
+const polyscanKey = process.env.POLYSCAN_KEY || '';
 
-let infuraApiKey: string;
-if (!process.env.INFURA_API_KEY) {
-  throw new Error('Please set your INFURA_API_KEY in a .env file');
-} else {
-  infuraApiKey = process.env.INFURA_API_KEY;
-}
-
-// DO NOT REMOVE YET, USEFUL FOR USE A FORKED NETWORK FOR TEST
-// let hardHatNetwork: HardhatNetworkUserConfig = { chainId: chainIds.hardhat };
-// if (process.env.FORK_RPC_URL) {
-//   hardHatNetwork = {
-//     chainId: chainIds.hardhat,
-//     forking: {
-//       url: process.env.FORK_RPC_URL,
-//       blockNumber: 11843408,
-//     },
-//     gas: 'auto',
-//     throwOnCallFailures: false,
-//     accounts: {
-//       accountsBalance: '10000000000000000000000000000000000',
-//     },
-//   };
-// }
-
-function createTestnetConfig(network: keyof typeof chainIds): NetworkUserConfig {
-  const url: string = 'https://' + network + '.infura.io/v3/' + infuraApiKey;
-  return {
-    accounts: {
-      count: 10,
-      initialIndex: 0,
-      mnemonic,
-      path: "m/44'/60'/0'/0",
-    },
-    chainId: chainIds[network],
-    url,
-    gasPrice: 20000000000,
-  };
-}
+const infuraKey = process.env.INFURA_KEY != '' ? process.env.INFURA_KEY : '';
+const ethApiKey = process.env.ALCHEMY_KEY_ETH != '' ? process.env.ALCHEMY_KEY_ETH : infuraKey;
+const sepoliaApiKey = process.env.ALCHEMY_KEY_SEPOLIA != '' ? process.env.ALCHEMY_KEY_SEPOLIA : infuraKey;
+const polygonApiKey = process.env.ALCHEMY_KEY_POLYGON != '' ? process.env.ALCHEMY_KEY_POLYGON : infuraKey;
+const mumbaiApiKey = process.env.ALCHEMY_KEY_MUMBAI != '' ? process.env.ALCHEMY_KEY_MUMBAI : infuraKey;
 
 const config: HardhatUserConfig = {
+  // docgen: {
+  //   // path: './docs',
+  //   // clear: true,
+  //   // runOnCompile: true,
+  //   pages: 'files',
+  // },
   defaultNetwork: 'hardhat',
   networks: {
-    hardhat: { chainId: chainIds.hardhat },
-    goerli: createTestnetConfig('goerli'),
-    kovan: createTestnetConfig('kovan'),
-    rinkeby: createTestnetConfig('rinkeby'),
-    ropsten: createTestnetConfig('ropsten'),
-    mainnet: createTestnetConfig('mainnet'),
+    hardhat: {
+      blockGasLimit: 20000000,
+      throwOnCallFailures: false,
+      chainId: 31337,
+      // accounts: {
+      //   mnemonic,
+      //   accountsBalance: '1000000000000000000000',
+      // },
+      forking: {
+        url: `https://eth-mainnet.alchemyapi.io/v2/${ethApiKey}`,
+        enabled: true,
+        //blockNumber: 16383055,
+      },
+    },
+    mainnet: {
+      url: `https://eth-mainnet.alchemyapi.io/v2/${ethApiKey}`,
+      chainId: 1,
+      accounts: [swarmx_privateKey],
+      gas: 2100000,
+      gasPrice: 45000000000, // 45
+    },
+    sepolia: {
+      url: `https://eth-sepolia.g.alchemy.com/v2/${sepoliaApiKey}`,
+      chainId: 11155111,
+      accounts: [testnet_privateKey],
+      gas: 2100000,
+      gasPrice: 45000000000, // 45
+    },
+    polygon: {
+      url: `https://polygon-mainnet.g.alchemy.com/v2/${polygonApiKey}`,
+      chainId: 137,
+      accounts: [swarmx_privateKey],
+      gas: 5000000,
+      gasPrice: 250000000000, // 250
+    },
+    mumbai: {
+      url: `https://polygon-mumbai.g.alchemy.com/v2/${mumbaiApiKey}`,
+      chainId: 80001,
+      accounts: [testnet_privateKey],
+      gas: 2100000,
+      gasPrice: 45000000000, // 45
+      gasMultiplier: 2,
+    },
   },
   paths: {
     artifacts: './artifacts',
@@ -99,14 +92,22 @@ const config: HardhatUserConfig = {
   solidity: {
     compilers: [
       {
-        version: '0.7.6',
+        version: "0.8.19",
         settings: {
-          // https://hardhat.org/hardhat-network/#solidity-optimizer-support
           optimizer: {
             enabled: true,
             runs: 200,
           },
         },
+      },
+      {
+        version: "0.7.6",
+        settings: {
+          optimizer: {
+            enabled: true,
+            runs: 200,
+          },
+        }
       },
     ],
   },
@@ -117,9 +118,8 @@ const config: HardhatUserConfig = {
   gasReporter: {
     coinmarketcap: process.env.COIN_MARKET_CAP_KEY,
     currency: 'USD',
-    // gasPrice: 21,
     enabled: process.env.REPORT_GAS ? true : false,
-    excludeContracts: ['mocks/'],
+    excludeContracts: ['mocks/', 'test/'],
   },
   contractSizer: {
     alphaSort: true,
@@ -127,10 +127,7 @@ const config: HardhatUserConfig = {
     disambiguatePaths: false,
   },
   etherscan: {
-    apiKey: process.env.ETHERSCAN_API_ID,
-  },
-  mocha: {
-    timeout: 200000,
+    apiKey: etherscanKey || polyscanKey,
   },
 };
 
