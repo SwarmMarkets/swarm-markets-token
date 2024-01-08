@@ -16,7 +16,7 @@ interface IERC20Burnable is IERC20 {
 /**
  * @title MATR vesting
  * @author Swarm
- * @dev Contract module used to lock SMT during Vesting period.
+ * @dev Contract module used to lock MATR during Vesting period.
  */
 contract vMATR is AccessControl, ERC20Pausable {
     error ZeroAddressPasted();
@@ -41,9 +41,9 @@ contract vMATR is AccessControl, ERC20Pausable {
     /// @dev Know Your Asset
     string public kya;
 
-    /// @dev trasnferable addresses whitelisted
+    /// @dev transferable addresses whitelisted
     mapping(address => bool) public whitelisted;
-    /// @dev trasnferable addresses whitelisted
+    /// @dev transferable addresses whitelisted
     mapping(address => uint256) public claimings;
 
     mapping(uint256 => uint256) public multiplier;
@@ -54,9 +54,9 @@ contract vMATR is AccessControl, ERC20Pausable {
     event AcceptedTokenSet(address _acceptedToken);
     /// @dev Emitted when `owner` claims.
     event StartTimeSet(uint256 startTime);
-    /// @dev Emitted when one address is included in trasnferable whitelisted.
+    /// @dev Emitted when one address is included in transferable whitelisted.
     event WhitelistedAddressAdded(address whitelisted);
-    /// @dev Emitted when one address is included in trasnferable whitelisted.
+    /// @dev Emitted when one address is included in transferable whitelisted.
     event WhitelistedAddressRemoved(address removed);
     event KYAset(string kya);
 
@@ -115,7 +115,7 @@ contract vMATR is AccessControl, ERC20Pausable {
      * Requirements:
      *
      * - the caller must have DEFAULT_ADMIN_ROLE.
-     * - `acceptedToken` need tbe approved first by caller on `acceptedToken` contract
+     * - `acceptedToken` need to be approved first by caller on `acceptedToken` contract
      */
     function deposit(uint256 _amount) external onlyRole(DEFAULT_ADMIN_ROLE) {
         acceptedToken.transferFrom(msg.sender, address(this), _amount);
@@ -137,7 +137,7 @@ contract vMATR is AccessControl, ERC20Pausable {
     }
 
     /**
-     * @dev add _address to the whitlist, signaling that it can make transfers of this token
+     * @dev add _address to the whitelist, signaling that it can make transfers of this token
      *
      * Requirements:
      *
@@ -150,7 +150,7 @@ contract vMATR is AccessControl, ERC20Pausable {
     }
 
     /**
-     * @dev add _address to the whitlist, signaling that it can make transfers of this token
+     * @dev add _address to the whitelist, signaling that it can make transfers of this token
      *
      * Requirements:
      *
@@ -167,12 +167,12 @@ contract vMATR is AccessControl, ERC20Pausable {
     }
 
     /**
-     * @dev sets distributionStartTime as the timestamp on which funds starts a progresive release
+     * @dev sets distributionStartTime as the timestamp on which funds starts a progressive release
      *
      * Requirements:
      *
      * - distributionStartTime must be equal to 0
-     * - distributionStartTime must be a unix timestamp format, grater than current timestamp
+     * - distributionStartTime must be a Unix timestamp format, grater than current timestamp
      */
     function setStartTime(uint256 startTime) external onlyRole(DEFAULT_ADMIN_ROLE) {
         if ((distributionStartTime != 0 && startTime > distributionStartTime) || startTime < block.timestamp) {
@@ -212,7 +212,7 @@ contract vMATR is AccessControl, ERC20Pausable {
     }
 
     /**
-     * @dev burns certain `amount` of vSMT token and release quivalent balance of acceptedToken
+     * @dev burns certain `amount` of vMATR token and release equivalent balance of acceptedToken
      *
      * Requirements:
      *
@@ -243,7 +243,7 @@ contract vMATR is AccessControl, ERC20Pausable {
     }
 
     /**
-     * @dev claims maximun available amount from caller's holdings
+     * @dev claims maximum available amount from caller's holdings
      *
      */
     function claimMaximumAmount() external {
@@ -261,7 +261,7 @@ contract vMATR is AccessControl, ERC20Pausable {
      * Requirements:
      *
      * - distributionStartTime must be different from 0
-     * - if distributionStartTime os differenct in grater than current timestamp, this function reverts
+     * - if distributionStartTime is different in grater than current timestamp, this function reverts
      */
     function getClaimableAmount(address awarded) public view isDistributionTimeSet returns (uint256 amount) {
         uint256 current = currentVestingPeriodSinceStartTime();
@@ -290,7 +290,7 @@ contract vMATR is AccessControl, ERC20Pausable {
 
     /**
      * @dev check funds locked by this contract in terms of acceptedToken's balance
-     * should be alkways equal to totalSupply, usefull as a doublecheck control
+     * should be always equal to totalSupply, useful as a doublecheck control
      */
     function getCurrentLockedAmount() external view returns (uint256 balanceOfAcceptedToken) {
         balanceOfAcceptedToken = acceptedToken.balanceOf(address(this));
