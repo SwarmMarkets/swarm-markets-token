@@ -181,7 +181,7 @@ contract SmtVesting is ERC20PresetMinterPauser {
      * @dev claims maximun available amount from caller's holdings
      *
      */
-    function claimMaximumAmount() external {
+    function claimMaximuAmount() external {
         uint256 amount = getClaimableAmount(_msgSender());
         require(amount != 0, "SmtVesting: nothing to claim");
         claim(amount);
