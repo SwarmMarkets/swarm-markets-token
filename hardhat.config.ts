@@ -1,107 +1,39 @@
-import { config as dotenvConfig } from 'dotenv';
-import { resolve } from 'path';
-dotenvConfig({ path: resolve(__dirname, './.env') });
-
-import { HardhatUserConfig } from 'hardhat/config';
-// import { HardhatNetworkUserConfig } from 'hardhat/types/config';
-import { NetworkUserConfig } from 'hardhat/types';
-import './tasks/accounts';
-import './tasks/clean';
-
+/* eslint-disable */
+import '@nomicfoundation/hardhat-toolbox';
+import dotenv from 'dotenv';
 import '@nomiclabs/hardhat-waffle';
 import 'hardhat-typechain';
 import 'solidity-coverage';
 import 'hardhat-gas-reporter';
 import 'hardhat-contract-sizer';
 import '@nomiclabs/hardhat-etherscan';
+import { HardhatUserConfig } from 'hardhat/config';
+import { getNetworkConfig, AccountTypes } from './utils/get-network-account';
+dotenv.config();
 
-const chainIds = {
-  ganache: 1337,
-  goerli: 5,
-  hardhat: 31337,
-  kovan: 42,
-  mainnet: 1,
-  rinkeby: 4,
-  ropsten: 3,
-};
+const etherscanKey = process.env.ETHSCAN_KEY ?? '';
+const polyscanKey = process.env.POLYSCAN_KEY ?? '';
+const basescanKey = process.env.BASESCAN_KEY ?? '';
+const opscanKey = process.env.OPSCAN_KEY ?? '';
+const arbitrumscanKey = process.env.ARBSCAN_KEY ?? '';
 
-// Ensure that we have all the environment variables we need.
-let mnemonic: string;
-if (!process.env.MNEMONIC) {
-  throw new Error('Please set your MNEMONIC in a .env file');
-} else {
-  mnemonic = process.env.MNEMONIC;
-}
-
-// let mnemonic: string;
-// if (!process.env.MNEMONIC) {
-//   throw new Error('Please set your MNEMONIC in a .env file');
-// } else {
-//   mnemonic = process.env.MNEMONIC;
-// }
-
-let infuraApiKey: string;
-if (!process.env.INFURA_API_KEY) {
-  throw new Error('Please set your INFURA_API_KEY in a .env file');
-} else {
-  infuraApiKey = process.env.INFURA_API_KEY;
-}
-
-// DO NOT REMOVE YET, USEFUL FOR USE A FORKED NETWORK FOR TEST
-// let hardHatNetwork: HardhatNetworkUserConfig = { chainId: chainIds.hardhat };
-// if (process.env.FORK_RPC_URL) {
-//   hardHatNetwork = {
-//     chainId: chainIds.hardhat,
-//     forking: {
-//       url: process.env.FORK_RPC_URL,
-//       blockNumber: 11843408,
-//     },
-//     gas: 'auto',
-//     throwOnCallFailures: false,
-//     accounts: {
-//       accountsBalance: '10000000000000000000000000000000000',
-//     },
-//   };
-// }
-
-function createTestnetConfig(network: keyof typeof chainIds): NetworkUserConfig {
-  const url: string = 'https://' + network + '.infura.io/v3/' + infuraApiKey;
-  return {
-    accounts: {
-      count: 10,
-      initialIndex: 0,
-      mnemonic,
-      path: "m/44'/60'/0'/0",
-    },
-    chainId: chainIds[network],
-    url,
-    gasPrice: 20000000000,
-  };
-}
+export const ethApiKey = process.env.ALCHEMY_KEY_ETH;
 
 const config: HardhatUserConfig = {
-  defaultNetwork: 'hardhat',
-  networks: {
-    hardhat: { chainId: chainIds.hardhat },
-    goerli: createTestnetConfig('goerli'),
-    kovan: createTestnetConfig('kovan'),
-    rinkeby: createTestnetConfig('rinkeby'),
-    ropsten: createTestnetConfig('ropsten'),
-    mainnet: createTestnetConfig('mainnet'),
-  },
-  paths: {
-    artifacts: './artifacts',
-    cache: './cache',
-    sources: './contracts',
-    tests: './test',
-  },
-
   solidity: {
     compilers: [
       {
-        version: '0.7.6',
+        version: '0.8.25',
         settings: {
-          // https://hardhat.org/hardhat-network/#solidity-optimizer-support
+          optimizer: {
+            enabled: true,
+            runs: 200,
+          },
+        },
+      },
+      {
+        version: '0.7.0',
+        settings: {
           optimizer: {
             enabled: true,
             runs: 200,
@@ -110,16 +42,28 @@ const config: HardhatUserConfig = {
       },
     ],
   },
-  typechain: {
-    outDir: 'typechain',
-    target: 'ethers-v5',
-  },
-  gasReporter: {
-    coinmarketcap: process.env.COIN_MARKET_CAP_KEY,
-    currency: 'USD',
-    // gasPrice: 21,
-    enabled: process.env.REPORT_GAS ? true : false,
-    excludeContracts: ['mocks/'],
+  defaultNetwork: 'hardhat',
+  networks: {
+    hardhat: {
+      throwOnCallFailures: false,
+      chainId: 31337,
+      accounts: {
+        accountsBalance: '10000000000000000000000000',
+      },
+      forking: {
+        url: getNetworkConfig('mainnet', AccountTypes.SwarmMnemonic).url!,
+        enabled: false,
+        //blockNumber: 16383055,
+      },
+    },
+    mainnet: getNetworkConfig('mainnet', AccountTypes.SwarmXMnemonic),
+    polygon: getNetworkConfig('polygon', AccountTypes.SwarmXMnemonic),
+    optimism: getNetworkConfig('optimism', AccountTypes.SwarmXMnemonic),
+    base: getNetworkConfig('base', AccountTypes.SwarmXMnemonic),
+    arbitrum: getNetworkConfig('arbitrum', AccountTypes.SwarmXMnemonic),
+    sepolia: getNetworkConfig('sepolia', AccountTypes.TestnetPk),
+    mumbai: getNetworkConfig('mumbai', AccountTypes.TestnetPk),
+    base_sepolia: getNetworkConfig('base_sepolia', AccountTypes.TestnetPk),
   },
   contractSizer: {
     alphaSort: true,
@@ -127,10 +71,49 @@ const config: HardhatUserConfig = {
     disambiguatePaths: false,
   },
   etherscan: {
-    apiKey: process.env.ETHERSCAN_API_ID,
+    apiKey: {
+      mainnet: etherscanKey,
+      polygon: polyscanKey,
+      optimisticEthereum: opscanKey,
+      base: basescanKey,
+      arbitrumOne: arbitrumscanKey,
+      base_sepolia: basescanKey,
+      sepolia: etherscanKey
+    },
+    customChains: [
+      {
+        network: 'base',
+        chainId: 8453,
+        urls: {
+          apiURL: 'https://api.basescan.org/api',
+          browserURL: 'https://basescan.org/',
+        },
+      },
+      {
+        network: 'base_sepolia',
+        chainId: 84532,
+        urls: {
+          apiURL: 'https://api-sepolia.basescan.org/api',
+          browserURL: 'https://sepolia.basescan.org',
+        },
+      },
+    ],
   },
-  mocha: {
-    timeout: 200000,
+  // docgen: {
+  //   // path: './docs',
+  //   // clear: true,
+  //   // runOnCompile: true,
+  //   pages: 'files',
+  // },
+  paths: {
+    artifacts: './artifacts',
+    cache: './cache',
+    sources: './contracts',
+    tests: './test',
+  },
+  typechain: {
+    outDir: 'typechain',
+    target: 'ethers-v5',
   },
 };
 

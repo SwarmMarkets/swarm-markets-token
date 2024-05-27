@@ -6,6 +6,11 @@
   "license": "GPL-3.0-only",
   "devDependencies": {
     "@chainlink/contracts": "^0.1.6",
+    "@nomicfoundation/hardhat-chai-matchers": "^2.0.6",
+    "@nomicfoundation/hardhat-ethers": "^3.0.5",
+    "@nomicfoundation/hardhat-ignition-ethers": "^0.15.0",
+    "@nomicfoundation/hardhat-network-helpers": "^1.0.10",
+    "@nomicfoundation/hardhat-verify": "^2.0.5",
     "@nomiclabs/hardhat-ethers": "^2.0.2",
     "@nomiclabs/hardhat-etherscan": "^2.1.1",
     "@nomiclabs/hardhat-solhint": "^2.0.0",
@@ -13,6 +18,8 @@
     "@openzeppelin/contracts": "3.4.1-solc-0.7-2",
     "@openzeppelin/upgrades-core": "^1.5.1",
     "@typechain/ethers-v5": "^6.0.5",
+    "@typechain/ethers-v6": "^0.5.1",
+    "@typechain/hardhat": "^9.1.0",
     "@types/chai": "^4.2.15",
     "@types/fs-extra": "^9.0.8",
     "@types/mocha": "^8.2.2",
@@ -28,7 +35,7 @@
     "ethereum-waffle": "^3.3.0",
     "ethers": "^5.0.32",
     "fs-extra": "^9.1.0",
-    "hardhat": "^2.1.1",
+    "hardhat": "^2.12.5",
     "hardhat-contract-sizer": "^2.0.3",
     "hardhat-gas-reporter": "^1.0.4",
     "hardhat-typechain": "^0.3.5",
@@ -92,5 +99,8 @@
       "yarn prettier:ts",
       "yarn lint:ts:fix"
     ]
+  },
+  "dependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^5.0.0"
   }
 }
