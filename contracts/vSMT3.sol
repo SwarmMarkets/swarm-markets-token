@@ -2,6 +2,7 @@
 pragma solidity ^0.8.26;
 
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Pausable.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
 
 error ZeroAddressError();
@@ -47,7 +48,7 @@ contract SmtVesting is ERC20Pausable, AccessControl {
      * @dev Emitted when `acceptedToken` is set.
      * @param _acceptedToken The address of the accepted token.
      */
-    event AcceptedTokenSet(address _acceptedToken);
+    event AcceptedTokenSet(IERC20 _acceptedToken);
 
     /**
      * @dev Emitted when `vestingStartTime` is set.
@@ -66,7 +67,7 @@ contract SmtVesting is ERC20Pausable, AccessControl {
      * @param _address The address to be checked.
      */
     modifier zeroAddressCheck(address _address) {
-        require(_address != address(0), ZeroAddressError());
+        if (_address == address(0)) revert ZeroAddressError();
         _;
     }
 
@@ -74,7 +75,7 @@ contract SmtVesting is ERC20Pausable, AccessControl {
      * @dev Ensures the distribution time is set.
      */
     modifier isDistributionTimeSet() {
-        require(vestingStartTime != 0, StartTimeNotSetError());
+        if (vestingStartTime == 0) revert StartTimeNotSetError();
         _;
     }
 
@@ -89,7 +90,7 @@ contract SmtVesting is ERC20Pausable, AccessControl {
         emit AcceptedTokenSet(_SMT);
 
         _grantRole(DEFAULT_ADMIN_ROLE, _admin);
-        _setupRole(PAUSER_ROLE, _admin);
+        _grantRole(PAUSER_ROLE, _admin);
     }
 
     /**
@@ -105,8 +106,8 @@ contract SmtVesting is ERC20Pausable, AccessControl {
      * @param _startTime The start time to be set.
      */
     function setStartTime(uint256 _startTime) external onlyRole(DEFAULT_ADMIN_ROLE) {
-        require(vestingStartTime == 0, StartTimeSetError());
-        require(_startTime >= block.timestamp, StartTimeError());
+        if (vestingStartTime > 0) revert StartTimeSetError();
+        if (_startTime < block.timestamp) revert StartTimeError();
 
         vestingStartTime = _startTime;
         emit StartTimeSet(_startTime);
@@ -136,8 +137,8 @@ contract SmtVesting is ERC20Pausable, AccessControl {
      */
     function claim(uint256 amount) public isDistributionTimeSet {
         uint256 claimableAmount = amountToClaim(msg.sender);
-        require(amount > 0, NothingToClaimError());
-        require(claimableAmount >= amount, AmountToClaimTooBigError(amount));
+        if (amount == 0) revert NothingToClaimError();
+        if (claimableAmount < amount) revert AmountToClaimTooBigError(amount);
 
         claimedAmount[msg.sender] += amount;
         _burn(msg.sender, amount);
@@ -186,7 +187,7 @@ contract SmtVesting is ERC20Pausable, AccessControl {
      * @return amount The amount of tokens that can be claimed.
      */
     function amountToClaim(address account) public view returns (uint256 amount) {
-        require(vestingStartTime != 0, StartTimeNotSetError());
+        if (vestingStartTime == 0) revert StartTimeNotSetError();
 
         uint256 initialBalance = balanceOf(account) + claimedAmount[account];
 
@@ -220,7 +221,8 @@ contract SmtVesting is ERC20Pausable, AccessControl {
      * @param value The amount of tokens being transferred.
      */
     function _update(address from, address to, uint256 value) internal virtual override {
-        require(whitelisted[from] || from == address(0) || to == address(0), OnlyWhitelistedTransfersError());
+        bool checkTransfer = whitelisted[from] || from == address(0) || to == address(0);
+        if (!checkTransfer) revert OnlyWhitelistedTransfersError();
         super._update(from, to, value);
     }
 }
