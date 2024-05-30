@@ -191,17 +191,17 @@ contract SmtVesting is ERC20Pausable, AccessControl {
 
         uint256 initialBalance = balanceOf(account) + claimedAmount[account];
 
-        if (block.timestamp >= vestingStartTime + 30 days) {
-            return (initialBalance * 1) / 6 - claimedAmount[account];
-        } else if (block.timestamp >= vestingStartTime + (2 * 30 days)) {
+        if (block.timestamp >= vestingStartTime) {
+            return (initialBalance / 6) - claimedAmount[account];
+        } else if (block.timestamp >= vestingStartTime + (30 days)) {
             return (initialBalance * 2) / 6 - claimedAmount[account];
-        } else if (block.timestamp >= vestingStartTime + (3 * 30 days)) {
+        } else if (block.timestamp >= vestingStartTime + (2 * 30 days)) {
             return (initialBalance * 3) / 6 - claimedAmount[account];
-        } else if (block.timestamp >= vestingStartTime + (4 * 30 days)) {
+        } else if (block.timestamp >= vestingStartTime + (3 * 30 days)) {
             return (initialBalance * 4) / 6 - claimedAmount[account];
-        } else if (block.timestamp >= vestingStartTime + (5 * 30 days)) {
+        } else if (block.timestamp >= vestingStartTime + (4 * 30 days)) {
             return (initialBalance * 5) / 6 - claimedAmount[account];
-        } else if (block.timestamp >= vestingStartTime + (6 * 30 days)) {
+        } else if (block.timestamp >= vestingStartTime + (5 * 30 days)) {
             return (initialBalance * 6) / 6 - claimedAmount[account];
         }
     }
