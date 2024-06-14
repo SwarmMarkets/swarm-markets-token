@@ -1,20 +1,16 @@
 import hre from 'hardhat';
 import { ContractFactory } from 'ethers';
 import { TransactionResponse } from '@ethersproject/abstract-provider';
-import { SwarmMarketsToken, SmtDistributor, SmtVesting } from '../typechain';
+import { SmtVesting } from '../typechain';
 
 import assert from 'assert';
-import ora, { Ora } from 'ora';
 import fsExtra from 'fs-extra';
 import path from 'path';
 import { promises as fs } from 'fs';
 import { getChainId, networkNames } from '@openzeppelin/upgrades-core';
 
-import SwarmMarketsTokenArtifact from '../artifacts/contracts/SwarmMarketsToken.sol/SwarmMarketsToken.json';
-import SmtDistributorArtifact from '../artifacts/contracts/SmtDistributor.sol/SmtDistributor.json';
 import SmtVestingArtifact from '../artifacts/contracts/SmtVesting.sol/SmtVesting.json';
 
-let spinner: Ora;
 
 const requiredConfigs = ['TREASURY_ACCOUNT'];
 requiredConfigs.forEach(conf => assert(process.env[conf], `Missing configuration variable: ${conf}`));
@@ -25,43 +21,42 @@ async function main(): Promise<void> {
   // const deployerAddress = await deployer.getAddress();
   let deploymentData = await read();
 
-  if (process.env.TREASURY_ACCOUNT) {
-    startLog('Deploying SmtVesting contract');
-    const SmtVestingFactory: ContractFactory = await ethers.getContractFactory('SmtVesting');
-    const SmtVestingContract: SmtVesting = (await SmtVestingFactory.deploy("Vesting Swarm Markets Token","vSMT")) as SmtVesting;
-    updatetLog(`Deploying SmtVesting contract - txHash: ${SmtVestingContract.deployTransaction.hash}`);
-    await SmtVestingContract.deployed();
+  console.log('Deploying SmtVesting contract');
+  const SmtVestingFactory: ContractFactory = await ethers.getContractFactory('SmtVesting');
+  const SmtVestingContract: SmtVesting = (await SmtVestingFactory.deploy("Vesting Swarm Markets Token v3", "vSMT3")) as SmtVesting;
+  console.log(`Deploying SmtVesting contract - txHash: ${SmtVestingContract.deployTransaction.hash}`);
+  await SmtVestingContract.deployed();
 
-    deploymentData = {
-      ...deploymentData,
-      SmtVesting: {
-        address: SmtVestingContract.address,
-        abi: SmtVestingArtifact.abi,
-        deployTransaction: await getRecipt(SmtVestingContract.deployTransaction),
-      },
-    };
+  deploymentData = {
+    ...deploymentData,
+    SmtVesting: {
+      address: SmtVestingContract.address,
+      abi: SmtVestingArtifact.abi,
+      deployTransaction: await getRecipt(SmtVestingContract.deployTransaction),
+    },
+  };
 
-    await write(deploymentData);
-    stopLog(
-      `SmtVesting deployed - txHash: ${SmtVestingContract.deployTransaction.hash} - address: ${SmtVestingContract.address}`,
-    );
+  await write(deploymentData);
+  console.log(
+    `SmtVesting deployed - txHash: ${SmtVestingContract.deployTransaction.hash} - address: ${SmtVestingContract.address}`,
+  );
 
-    // Set SmtVesting token
-    startLog('Setting SmtVesting accepted token');
-    const piaTx = await SmtVestingContract.setAcceptedToken(deploymentData.SwarmMarketsToken.address);
-    updatetLog(`Setting SmtVesting accepted token - txHash: ${piaTx.hash}`);
-    await piaTx.wait();
-    stopLog(`Done setting SmtVesting accepted token - txHash: ${piaTx.hash}`);
+  // Set SmtVesting token
+  console.log('Setting SmtVesting accepted token');
+  const piaTx = await SmtVestingContract.setAcceptedToken('0xB17548c7B510427baAc4e267BEa62e800b247173');
+  console.log(`Setting SmtVesting accepted token - txHash: ${piaTx.hash}`);
+  await piaTx.wait();
+  console.log(`Done setting SmtVesting accepted token - txHash: ${piaTx.hash}`);
 
-    // Transfer SmtVesting ownership
-    /*
-    startLog('Add TREASURY_ACCOUNT to whitelist');
-    const toTx = await SmtVestingContract.addWhitelistedAddress(process.env.TREASURY_ACCOUNT);
-    updatetLog(`Add TREASURY_ACCOUNT to whitelist - txHash: ${toTx.hash}`);
-    await toTx.wait();
-    stopLog(`Done Add TREASURY_ACCOUNT to whitelist - txHash: ${toTx.hash}`);
-    */
-  }
+  // Transfer SmtVesting ownership
+  /*
+  startLog('Add TREASURY_ACCOUNT to whitelist');
+  const toTx = await SmtVestingContract.addWhitelistedAddress(process.env.TREASURY_ACCOUNT);
+  updatetLog(`Add TREASURY_ACCOUNT to whitelist - txHash: ${toTx.hash}`);
+  await toTx.wait();
+  stopLog(`Done Add TREASURY_ACCOUNT to whitelist - txHash: ${toTx.hash}`);
+  */
+
 }
 
 async function read(): Promise<any> {
@@ -90,18 +85,6 @@ async function getDeploymentFile() {
   return path.join(`deployments/${name}.json`);
 }
 
-function startLog(message: string) {
-  spinner = ora().start(message);
-}
-
-function updatetLog(message: string) {
-  spinner.text = message;
-}
-
-function stopLog(message: string) {
-  spinner.succeed(message);
-}
-
 async function getRecipt(transactionResponse: TransactionResponse) {
   const receipt = await transactionResponse.wait();
   return {
@@ -119,7 +102,6 @@ async function getRecipt(transactionResponse: TransactionResponse) {
 main()
   .then(() => process.exit(0))
   .catch((error: Error) => {
-    spinner.fail();
     console.error(error);
     process.exit(1);
   });
