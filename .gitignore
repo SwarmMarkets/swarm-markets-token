@@ -13,6 +13,7 @@ lib/
 node_modules/
 bin/
 solc/
+typechain/
 
 # files
 *.env
