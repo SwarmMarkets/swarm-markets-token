@@ -5,11 +5,15 @@ cache/
 coverage/
 dist/
 lib/
-node_modules/
 typechain/
+node_modules/
+_tmp/
 
 # files
 .solcover.js
 coverage.json
 package.json
 docify.js
+
+# Temporary ignore this due some error with prettier-plugin-solidity
+contracts/authorization/Authorization.sol

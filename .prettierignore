@@ -7,8 +7,6 @@ dist/
 lib/
 node_modules/
 typechain/
-contracts/mocks/
-contracts/test/
 
 # files
 coverage.json

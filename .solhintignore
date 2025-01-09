@@ -3,7 +3,3 @@
 build/
 dist/
 node_modules/
-contracts/mocks/*
-contracts/test/*
-
-contracts/authorization/Authorization.sol

@@ -10,17 +10,17 @@
     "resolveJsonModule": true,
     "sourceMap": true,
     "strict": true,
+    "baseUrl": ".",
     "target": "es5"
   },
-  "exclude": ["node_modules"],
+  "exclude": ["node_modules", "artifacts", "cache", ".git"],
   "include": [
-    "artifacts/**/*",
-    "artifacts/**/*.json",
     "scripts/**/*",
     "tasks/**/*",
     "test/**/*",
+    "./utils/**/*",
     "typechain/**/*",
-    "types/**/*",
-    "hardhat.config.ts"
+    "hardhat.config.ts",
+    "./.eslintrc.yaml"
   ]
 }

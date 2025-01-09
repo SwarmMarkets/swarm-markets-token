@@ -13,6 +13,7 @@ lib/
 node_modules/
 bin/
 solc/
+_tmp/
 typechain/
 
 # files
@@ -25,3 +26,11 @@ yarn-debug.log*
 yarn-error.log*
 .DS_Store
 .openzeppelin/unknown-*.json
+.vscode/settings.json
+deployments/Swarm environmentals.xlsx
+deployments/_spreadSheet-data-mainnet.json
+deployments/_spreadSheet-data-rinkeby.json
+deployments/_spreadSheet-data-mumbai.json
+deployments/_spreadSheet-data-polygon.json
+
+.idea

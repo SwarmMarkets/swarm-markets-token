@@ -1,7 +1,7 @@
 const shell = require('shelljs');
 
 // The environment variables are loaded in hardhat.config.ts
-const mnemonic = process.env.MNEMONIC;
+const mnemonic = process.env.SWARM_MNEMONIC;
 if (!mnemonic) {
   throw new Error('Please set your MNEMONIC in a .env file');
 }
@@ -19,5 +19,5 @@ module.exports = {
   providerOptions: {
     mnemonic,
   },
-  skipFiles: ['mocks', 'test'],
+  skipFiles: ['mocks', 'test', 'mockFeeds', 'permissioning/PermissionManagerV3.sol'],
 };
