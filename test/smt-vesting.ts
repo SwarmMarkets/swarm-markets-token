@@ -7,7 +7,7 @@ import csv from 'csv-parser';
 import fsExtra from 'fs-extra';
 import path from 'path';
 
-import { SmtVestingWithSetters, SwarmMarketsToken } from '../typechain';
+import { SmtVestingV1, SwarmMarketsToken } from '../typechain';
 
 import Reverter from './utils/reverter';
 import Time from './utils/time';
@@ -18,8 +18,8 @@ let kakaroto: Signer;
 let deployerAddress: string;
 let kakarotoAddress: string;
 
-let smtVesting: SmtVestingWithSetters;
-let smtVestingKakaroto: SmtVestingWithSetters;
+let smtVesting: SmtVestingV1;
+let smtVestingKakaroto: SmtVestingV1;
 let smt: SwarmMarketsToken;
 
 const getData = (): Promise<any> => {
@@ -46,9 +46,9 @@ describe('SmtVesting contract', function () {
     [deployer, kakaroto] = await ethers.getSigners();
     [deployerAddress, kakarotoAddress] = await Promise.all([deployer.getAddress(), kakaroto.getAddress()]);
 
-    const SmtVestingFactory = await ethers.getContractFactory('SmtVestingWithSetters');
+    const SmtVestingFactory = await ethers.getContractFactory('SmtVestingV1');
 
-    smtVesting = (await SmtVestingFactory.deploy()) as SmtVestingWithSetters;
+    smtVesting = (await SmtVestingFactory.deploy('Swarm Markets Vesting Token v3', 'vSMT3')) as SmtVestingV1;
     await smtVesting.deployed();
 
     initialBlock = (await smtVesting.initialBlock()).toNumber();
