@@ -1,9 +1,9 @@
 //SPDX-License-Identifier: GPL-3.0-only
-pragma solidity ^0.7.0;
+pragma solidity ^0.8.27;
 
 /**
  * @title IEurPriceFeed
- * @author Protofire
+ * @author Swarm
  * @dev Interface to be implemented by any EurPriceFeed logic contract used in the protocol.
  *
  */

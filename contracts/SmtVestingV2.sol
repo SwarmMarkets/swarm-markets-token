@@ -1,18 +1,15 @@
 //SPDX-License-Identifier: GPL-3.0-only
-pragma solidity ^0.7.0;
+pragma solidity ^0.8.27;
 
-import "@openzeppelin/contracts/math/SafeMath.sol";
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "@openzeppelin/contracts/presets/ERC20PresetMinterPauser.sol";
+import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import { ERC20PresetMinterPauser } from "@openzeppelin/contracts/token/ERC20/presets/ERC20PresetMinterPauser.sol";
 
 /**
  * @title SmtVesting
- * @author Protofire
+ * @author Swarm
  * @dev Contract module used to lock SMT during Vesting period.
  */
-contract SmtVesting is ERC20PresetMinterPauser {
-    using SafeMath for uint256;
-
+contract SmtVestingV2 is ERC20PresetMinterPauser {
     /// @dev ERC20 basic token contract being held
     IERC20 public acceptedToken;
 
@@ -66,9 +63,9 @@ contract SmtVesting is ERC20PresetMinterPauser {
      *
      */
     function setAcceptedToken(address _token) external {
-        require(hasRole(DEFAULT_ADMIN_ROLE, _msgSender()), "SmtVesting: only DEFAULT_ADMIN_ROLE");
-        require(_token != address(0), "SmtVesting: zero address error");
-        require(address(acceptedToken) == address(0), "SmtVesting: token is already set");
+        require(hasRole(DEFAULT_ADMIN_ROLE, _msgSender()), "must have DEFAULT_ADMIN_ROLE");
+        require(_token != address(0), "token is the zero address");
+        require(address(acceptedToken) == address(0), "token is already set");
 
         acceptedToken = IERC20(_token);
         emit AcceptedTokenSet(_token);
@@ -83,7 +80,7 @@ contract SmtVesting is ERC20PresetMinterPauser {
      * - `acceptedToken` need tbe approved first by caller on `acceptedToken` contract
      */
     function deposit(uint256 _amount) external {
-        require(hasRole(DEFAULT_ADMIN_ROLE, _msgSender()), "SmtVesting: only DEFAULT_ADMIN_ROLE");
+        require(hasRole(DEFAULT_ADMIN_ROLE, _msgSender()), "must have DEFAULT_ADMIN_ROLE");
         acceptedToken.transferFrom(_msgSender(), address(this), _amount);
         _mint(_msgSender(), _amount);
     }
@@ -105,7 +102,7 @@ contract SmtVesting is ERC20PresetMinterPauser {
      *
      */
     function setKYA(string calldata _knowYourAsset) external {
-        require(hasRole(DEFAULT_ADMIN_ROLE, _msgSender()), "SmtVesting: only DEFAULT_ADMIN_ROLE");
+        require(hasRole(DEFAULT_ADMIN_ROLE, _msgSender()), "must have DEFAULT_ADMIN_ROLE");
         KYA = _knowYourAsset;
     }
 
@@ -118,8 +115,8 @@ contract SmtVesting is ERC20PresetMinterPauser {
      * - `_address` can not be zero address
      */
     function addWhitelistedAddress(address _address) external {
-        require(hasRole(DEFAULT_ADMIN_ROLE, _msgSender()), "SmtVesting: only DEFAULT_ADMIN_ROLE");
-        require(_address != address(0), "SmtVesting: zero address error");
+        require(hasRole(DEFAULT_ADMIN_ROLE, _msgSender()), "must have DEFAULT_ADMIN_ROLE");
+        require(_address != address(0), "_address is the zero address");
 
         whitelist[_address] = true;
 
@@ -136,13 +133,13 @@ contract SmtVesting is ERC20PresetMinterPauser {
      * - `_address` can not be zero address
      */
     function claim(uint256 amount) public {
-        require(distributionStartTime != 0, "SmtVesting: distributionStartTime not set");
+        require(distributionStartTime != 0, "distributionStartTime not set");
         uint256 claimableAmount = getClaimableAmount(_msgSender());
-        require(claimableAmount >= amount, "SmtVesting: amount too big");
+        require(claimableAmount >= amount, "amount too big");
         acceptedToken.transfer(_msgSender(), amount);
         _burn(_msgSender(), amount);
 
-        claimings[_msgSender()] = claimings[_msgSender()].add(amount);
+        claimings[_msgSender()] = claimings[_msgSender()] + (amount);
         emit Claim(_msgSender(), amount);
     }
 
@@ -151,39 +148,36 @@ contract SmtVesting is ERC20PresetMinterPauser {
      *
      */
     function mint(address to, uint256 amount) public pure override {
-        revert("SmtVesting: minting is only allowed using deposit function");
+        revert("Minting is only allowed using deposit function");
     }
-
     /**
      * @dev burning directly is disallowed
      *
      */
     function burn(uint256 amount) public pure override {
-        revert("SmtVesting: burning is only allowed using claim function");
+        revert("Burning is only allowed using claim function");
     }
-
     function burnFrom(address account, uint256 amount) public pure override {
-        revert("SmtVesting: burning is only allowed using claim function");
+        revert("Burning is only allowed using claim function");
     }
-
     /**
      * @dev only whitelisted address are allowed to transfer this token's ownership
      * - address 0x0 are allowed by default cause we need to burn and mint tokens
      */
     function _beforeTokenTransfer(address from, address to, uint256 amount) internal virtual override {
         super._beforeTokenTransfer(from, to, amount);
-        require(!paused(), "SmtVesting:: token transfer while paused");
+        require(!paused(), "ERC20Pausable: token transfer while paused");
         bool allowed = whitelist[from] || from == address(0) || to == address(0);
-        require(allowed, "SmtVesting: trasnfer is just allowed for whitelisted addresses");
+        require(allowed, "trasnfer is just allowed for whitelisted addresses");
     }
 
     /**
      * @dev claims maximun available amount from caller's holdings
      *
      */
-    function claimMaximuAmount() external {
+    function claimMaximunAmount() external {
         uint256 amount = getClaimableAmount(_msgSender());
-        require(amount != 0, "SmtVesting: nothing to claim");
+        require(amount != 0, "nothing to claim");
         claim(amount);
     }
 
@@ -197,22 +191,22 @@ contract SmtVesting is ERC20PresetMinterPauser {
      * - if distributionStartTime os differenct in grater than current timestamp, this function reverts
      */
     function getClaimableAmount(address awarded) public view returns (uint256 amount) {
-        require(distributionStartTime != 0, "SmtVesting: distributionSartTime not set");
+        require(distributionStartTime != 0, "distributionSartTime not set");
 
         uint256 currentQuarter = currentQuarterSinceStartTime();
-        uint256 balanceOnAuction = balanceOf(awarded).add(claimings[awarded]);
+        uint256 balanceOnAuction = balanceOf(awarded) + (claimings[awarded]);
 
         if (currentQuarter == 0) {
-            return (balanceOnAuction.mul(2).div(10)).sub(claimings[awarded]);
+            return ((balanceOnAuction * (2)) / (10)) - (claimings[awarded]);
         }
         if (currentQuarter == 1) {
-            return (balanceOnAuction.mul(4).div(10)).sub(claimings[awarded]);
+            return ((balanceOnAuction * (4)) / (10)) - (claimings[awarded]);
         }
         if (currentQuarter == 2) {
-            return (balanceOnAuction.mul(6).div(10)).sub(claimings[awarded]);
+            return ((balanceOnAuction * (6)) / (10)) - (claimings[awarded]);
         }
         if (currentQuarter == 3) {
-            return (balanceOnAuction.mul(8).div(10)).sub(claimings[awarded]);
+            return ((balanceOnAuction * (8)) / (10)) - (claimings[awarded]);
         }
         if (currentQuarter >= 4) {
             return balanceOf(awarded);
@@ -223,9 +217,9 @@ contract SmtVesting is ERC20PresetMinterPauser {
      * @dev returns number of quarters passed from distributionStartTime
      */
     function currentQuarterSinceStartTime() public view returns (uint256 currentQuarter) {
-        require(distributionStartTime != 0, "SmtVesting: distributionStartTime not set");
-        require(distributionStartTime < block.timestamp, "SmtVesting: vesting did not start yet");
-        return (block.timestamp.sub(distributionStartTime)).div(SECONDS_IN_QUARTER);
+        require(distributionStartTime != 0, "distributionStartTime not set");
+        require(distributionStartTime < block.timestamp, "Vesting did not start yet");
+        return (block.timestamp - (distributionStartTime)) / (SECONDS_IN_QUARTER);
     }
 
     /**
@@ -237,9 +231,9 @@ contract SmtVesting is ERC20PresetMinterPauser {
      * - distributionStartTime must be a unix timestamp format, grater than current timestamp
      */
     function setStartTime(uint256 startTime) external {
-        require(hasRole(DEFAULT_ADMIN_ROLE, _msgSender()), "SmtVesting: only DEFAULT_ADMIN_ROLE");
-        require((distributionStartTime == 0), "SmtVesting: distributionStartTime can be set just one time");
-        require(startTime > block.timestamp, "SmtVesting: start time must be a future timestamp");
+        require(hasRole(DEFAULT_ADMIN_ROLE, _msgSender()), "must have DEFAULT_ADMIN_ROLE");
+        require((distributionStartTime == 0), "distributionStartTime can be set just one time");
+        require(startTime > block.timestamp, "Start time must be a future timestamp");
 
         distributionStartTime = startTime;
         emit StartTimeSet(startTime);

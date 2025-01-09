@@ -1,16 +1,12 @@
 //SPDX-License-Identifier: Unlicense
-pragma solidity ^0.7.0;
-pragma experimental ABIEncoderV2;
+pragma solidity ^0.8.27;
 
-import "@openzeppelin/contracts/math/SafeMath.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
-import "@chainlink/contracts/src/v0.7/interfaces/AggregatorV2V3Interface.sol";
-import "./interfaces/IBPool.sol";
-import "./interfaces/IBRegistry.sol";
-import "./interfaces/IEurPriceFeed.sol";
-import "./interfaces/IXTokenWrapper.sol";
-
-import "hardhat/console.sol";
+import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
+import { AggregatorV2V3Interface } from "@chainlink/contracts/src/v0.8/shared/interfaces/AggregatorV2V3Interface.sol";
+import { IBPool } from "./interfaces/IBPool.sol";
+import { IBRegistry } from "./interfaces/IBRegistry.sol";
+import { IEurPriceFeed } from "./interfaces/IEurPriceFeed.sol";
+import { IXTokenWrapper } from "./interfaces/IXTokenWrapper.sol";
 
 interface IDecimals {
     function decimals() external view returns (uint8);
@@ -18,14 +14,12 @@ interface IDecimals {
 
 /**
  * @title SmtPriceFeed
- * @author Protofire
+ * @author Swarm
  * @dev Contract module to retrieve SMT price per asset.
  */
 contract SmtPriceFeed is Ownable {
-    using SafeMath for uint256;
-
     uint256 public constant decimals = 18;
-    uint256 public constant ONE = 10**18;
+    uint256 public constant ONE = 10 ** 18;
     address public immutable WETH_ADDRESS;
 
     /// @dev Address smt
@@ -63,13 +57,7 @@ contract SmtPriceFeed is Ownable {
      * Sets ownership to the account that deploys the contract.
      *
      */
-    constructor(
-        address _registry,
-        address _eurPriceFeed,
-        address _smt,
-        address _xTokenWrapper,
-        address _wethAddress
-    ) {
+    constructor(address _registry, address _eurPriceFeed, address _smt, address _xTokenWrapper, address _wethAddress) {
         _setRegistry(_registry);
         _setEurPriceFeed(_eurPriceFeed);
         _setSmt(_smt);
@@ -200,7 +188,7 @@ contract SmtPriceFeed is Ownable {
      */
     function getPrice(address _asset) external view returns (uint256) {
         uint8 assetDecimals = IDecimals(_asset).decimals();
-        return calculateAmount(_asset, 10**assetDecimals);
+        return calculateAmount(_asset, 10 ** assetDecimals);
     }
 
     /**
@@ -218,7 +206,7 @@ contract SmtPriceFeed is Ownable {
         if (_asset == xSMT) {
             return _assetAmountIn;
         }
-        
+
         // get amount from some of the pools
         uint256 amount = getAvgAmountFromPools(_asset, xSMT, _assetAmountIn);
 
@@ -234,9 +222,9 @@ contract SmtPriceFeed is Ownable {
                 int256 assetEthPrice = AggregatorV2V3Interface(assetEthFeed).latestAnswer();
                 if (assetEthPrice > 0) {
                     uint8 assetDecimals = IDecimals(_asset).decimals();
-                    uint256 assetToEthAmount = _assetAmountIn.mul(uint256(assetEthPrice)).div(10**assetDecimals);
+                    uint256 assetToEthAmount = (_assetAmountIn * (uint256(assetEthPrice))) / (10 ** assetDecimals);
 
-                    amount = assetToEthAmount.mul(ethSmtAmount).div(ONE);
+                    amount = (assetToEthAmount * (ethSmtAmount)) / (ONE);
                 }
             }
         }
@@ -251,12 +239,11 @@ contract SmtPriceFeed is Ownable {
      */
     function latestAnswer() external view returns (int256) {
         // pools will include the wrapepd SMT and wrapped ETH
-        uint256 price =
-            getAvgAmountFromPools(
-                xTokenWrapper.tokenToXToken(smt),
-                xTokenWrapper.tokenToXToken(WETH_ADDRESS),
-                ONE
-            );
+        uint256 price = getAvgAmountFromPools(
+            xTokenWrapper.tokenToXToken(smt),
+            xTokenWrapper.tokenToXToken(WETH_ADDRESS),
+            ONE
+        );
 
         return int256(price);
     }
@@ -273,7 +260,7 @@ contract SmtPriceFeed is Ownable {
             totalAmount += calcOutGivenIn(poolAddresses[i], _assetIn, _assetOut, _assetAmountIn);
         }
 
-        return totalAmount > 0 ? totalAmount.div(poolAddresses.length) : 0;
+        return totalAmount > 0 ? totalAmount / (poolAddresses.length) : 0;
     }
 
     function calcOutGivenIn(

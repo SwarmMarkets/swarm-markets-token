@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-only
-pragma solidity ^0.8.26;
+pragma solidity ^0.8.27;
 
-import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Pausable.sol";
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "@openzeppelin/contracts/access/AccessControl.sol";
+import "@openzeppelin/contracts-v5/token/ERC20/extensions/ERC20Pausable.sol";
+import "@openzeppelin/contracts-v5/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts-v5/access/AccessControl.sol";
 
 error ZeroAddressError();
 error StartTimeError();
@@ -19,7 +19,7 @@ error AccounMustBePAUSER(address _account);
  * @dev Contract module used to lock SMT during Vesting period.
  * @author Swarm
  */
-contract SmtVesting is ERC20Pausable, AccessControl {
+contract SmtVestingV3 is ERC20Pausable, AccessControl {
     bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
 
     /// @dev ERC20 basic token contract being held
