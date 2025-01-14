@@ -8677,10 +8677,10 @@ sol2uml@^2.5.4:
     js-graph-algorithms "^1.0.18"
     klaw "^4.1.0"
 
-solady@^0.0.282:
-  version "0.0.282"
-  resolved "https://registry.yarnpkg.com/solady/-/solady-0.0.282.tgz#8f68acccd93acef5bf06f3a9f718681b4ba234d9"
-  integrity sha512-Q1LKFqe0iw5ltbaX3cCkuy8OQUQ9752qSQP+ZSWT4V78oFAkzBxyLlp+WQf+ClRrXEdHjoBy5n8Og2nseFLuiw==
+solady@^0.0.291:
+  version "0.0.291"
+  resolved "https://registry.yarnpkg.com/solady/-/solady-0.0.291.tgz#90b7f9482907be1d21b8c34061d1c19bd8992f1a"
+  integrity sha512-dToLCqphU3ZFQCQqZ38PfAPmMabLJeszZ7WwbKRKnQr05UL+inNFb0WvjNBWzCd4FSQu0Q9RBe4bJa73C8Yd7Q==
 
 "solc-0.7@npm:solc@^0.7.0":
   version "0.7.6"

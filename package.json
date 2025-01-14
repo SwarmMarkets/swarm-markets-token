@@ -118,7 +118,7 @@
     "@arbitrum/sdk": "^3.3.3",
     "@lifi/sdk": "^2.5.0",
     "dotenv": "^16.0.3",
-    "solady": "^0.0.282"
+    "solady": "^0.0.291"
   },
   "husky": {
     "hooks": {
