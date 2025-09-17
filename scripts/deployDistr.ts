@@ -1,10 +1,11 @@
 import { ethers } from 'hardhat';
 
-const smt = '0xFa1EDF1A0cEB62Db77c13da2DA99f17a81760D22';
+const smt = '0x4d544E1236D1D36fCcD0bA31E5c30FC5cFB4FF4a';
+const owner = '0x1dEE90df6cDd8a7dA3510FB5b0305EFE57239641';
+
 async function main() {
-  const [dep] = await ethers.getSigners();
   const factory = await ethers.getContractFactory('SmtDistributor');
-  const distr = await factory.deploy(smt, dep.address);
+  const distr = await factory.deploy(smt, owner);
   await distr.deployed();
   console.log('Distr: ', distr.address);
 }

@@ -1,13 +1,13 @@
-import hre, { ethers } from 'hardhat';
+import hre from 'hardhat';
 
-const distr = '0x98da72acfBAc0b5ef911974CEEF209637DfE0373';
-const smt = '0xFa1EDF1A0cEB62Db77c13da2DA99f17a81760D22';
+const distr = '0xbCdEb213c74B0a1BD3586DFa07Ba4107470A0e18';
+const smt = '0x4d544E1236D1D36fCcD0bA31E5c30FC5cFB4FF4a';
+const owner = '0x1dEE90df6cDd8a7dA3510FB5b0305EFE57239641';
 
 async function main(): Promise<void> {
-  const [dep] = await ethers.getSigners();
   await hre.run('verify:verify', {
     address: distr,
-    constructorArguments: [smt, dep.address],
+    constructorArguments: [smt, owner],
   });
 }
 
