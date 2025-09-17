@@ -1,0 +1,152 @@
+{
+  "mainnet": {
+    "chainId": 1,
+    "alchemySubdomain": "eth-mainnet",
+    "infuraSubdomain": "mainnet",
+    "explorer": "https://etherscan.io/"
+  },
+  "optimism": {
+    "chainId": 10,
+    "alchemySubdomain": "opt-mainnet",
+    "infuraSubdomain": "optimism-mainnet",
+    "explorer": "https://optimistic.etherscan.io/"
+  },
+  "bsc": {
+    "chainId": 56,
+    "alchemySubdomain": "bnb-mainnet",
+    "infuraSubdomain": "bsc-mainnet",
+    "explorer": "https://bscscan.com/"
+  },
+  "gnosis": {
+    "chainId": 100,
+    "alchemySubdomain": "gnosis-mainnet",
+    "explorer": "https://gnosisscan.io/"
+  },
+  "unichain": {
+    "chainId": 130,
+    "alchemySubdomain": "unichain-mainnet",
+    "infuraSubdomain": "unichain-mainnet",
+    "explorer": "https://uniscan.xyz/"
+  },
+  "polygon": {
+    "chainId": 137,
+    "alchemySubdomain": "polygon-mainnet",
+    "infuraSubdomain": "polygon-mainnet",
+    "explorer": "https://polygonscan.com/"
+  },
+  "sonic": {
+    "chainId": 146,
+    "alchemySubdomain": "sonic-mainnet",
+    "explorer": "https://sonicscan.org/"
+  },
+  "polygonZk": {
+    "chainId": 1101,
+    "alchemySubdomain": "polygonzkevm-mainnet",
+    "explorer": "https://zkevm.polygonscan.com/"
+  },
+  "base": {
+    "chainId": 8453,
+    "alchemySubdomain": "base-mainnet",
+    "infuraSubdomain": "base-mainnet",
+    "explorer": "https://basescan.org/"
+  },
+  "arbitrum": {
+    "chainId": 42161,
+    "alchemySubdomain": "arb-mainnet",
+    "infuraSubdomain": "arbitrum-mainnet",
+    "explorer": "https://arbiscan.io/"
+  },
+  "celo": {
+    "chainId": 42220,
+    "alchemySubdomain": "celo-mainnet",
+    "infuraSubdomain": "celo-mainnet",
+    "explorer": "https://celoscan.io/"
+  },
+  "snowtrace": {
+    "chainId": 43114,
+    "alchemySubdomain": "avax-mainnet",
+    "infuraSubdomain": "avalanche-mainnet",
+    "explorer": "https://snowscan.xyz"
+  },
+  "linea": {
+    "chainId": 59144,
+    "alchemySubdomain": "linea-mainnet",
+    "infuraSubdomain": "linea-mainnet",
+    "explorer": "https://lineascan.build/"
+  },
+  "blast": {
+    "chainId": 81457,
+    "alchemySubdomain": "blast-mainnet",
+    "infuraSubdomain": "blast-mainnet",
+    "explorer": "https://blastscan.io/"
+  },
+  "scroll": {
+    "chainId": 534352,
+    "alchemySubdomain": "scroll-mainnet",
+    "infuraSubdomain": "scroll-mainnet",
+    "explorer": "https://scrollscan.com/"
+  },
+  "hedera": {
+    "chainId": 295,
+    "rpc": "https://295.rpc.thirdweb.com",
+    "explorer": "https://hashscan.io/mainnet"
+  },
+  "hyperevm": {
+    "chainId": 999,
+    "rpc": "https://rpc.hyperliquid.xyz/evm",
+    "explorer": "https://hyperevmscan.io/"
+  },
+  "mode": {
+    "chainId": 34443,
+    "rpc": "https://1rpc.io/mode",
+    "explorer": "https://modescan.io",
+    "api": "https://api.routescan.io/v2/network/mainnet/evm/34443/etherscan"
+  },
+  "plume": {
+    "chainId": 98866,
+    "rpc": "https://rpc.plume.org",
+    "explorer": "https://explorer.plume.org/",
+    "api": "https://explorer.plume.org/api"
+  },
+  "mezo": {
+    "chainId": 31612,
+    "rpc": "https://jsonrpc-mezo.boar.network",
+    "explorer": "https://explorer.mezo.org/",
+    "api": "https://explorer.mezo.org/api"
+  },
+  "amoy": {
+    "chainId": 80002,
+    "alchemySubdomain": "polygon-amoy",
+    "infuraSubdomain": "polygon-amoy",
+    "explorer": "https://amoy.polygonscan.com"
+  },
+  "base_sepolia": {
+    "chainId": 84532,
+    "alchemySubdomain": "base-sepolia",
+    "infuraSubdomain": "base-sepolia",
+    "explorer": "https://sepolia.basescan.org/"
+  },
+  "arbitrum_sepolia": {
+    "chainId": 421614,
+    "alchemySubdomain": "arb-sepolia",
+    "infuraSubdomain": "arbitrum-sepolia",
+    "explorer": "https://sepolia.arbiscan.io/"
+  },
+  "sepolia": {
+    "chainId": 11155111,
+    "alchemySubdomain": "eth-sepolia",
+    "infuraSubdomain": "sepolia",
+    "explorer": "https://sepolia.etherscan.io/"
+  },
+  "blast_sepolia": {
+    "chainId": 168587773,
+    "alchemySubdomain": "blast-sepolia",
+    "infuraSubdomain": "blast-sepolia",
+    "explorer": "https://sepolia.blastscan.io/"
+  },
+  "hedera_testnet": {
+    "chainId": 296,
+    "rpc": "https://testnet.hashio.io/api",
+    "explorer": "https://hashscan.io/testnet"
+  }
+}
