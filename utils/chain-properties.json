@@ -88,7 +88,7 @@
   },
   "hedera": {
     "chainId": 295,
-    "rpc": "https://295.rpc.thirdweb.com",
+    "rpc": "https://hedera.linkpool.pro",
     "explorer": "https://hashscan.io/mainnet"
   },
   "hyperevm": {
@@ -113,6 +113,12 @@
     "rpc": "https://jsonrpc-mezo.boar.network",
     "explorer": "https://explorer.mezo.org/",
     "api": "https://explorer.mezo.org/api"
+  },
+  "plasma": {
+    "chainId": 9745,
+    "rpc": "https://rpc.plasma.to",
+    "explorer": "https://plasmascan.to/",
+    "api": "https://api.routescan.io/v2/network/mainnet/evm/9745/etherscan"
   },
   "amoy": {
     "chainId": 80002,

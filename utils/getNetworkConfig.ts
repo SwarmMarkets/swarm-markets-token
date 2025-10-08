@@ -18,6 +18,9 @@ const networkAccountMap: Record<string, AccountTypes> = Object.fromEntries(
     if (hederaOnly.includes(slug)) {
       return [slug, AccountTypes.HEDERA_PK];
     }
+    if (slug === 'hyperevm') {
+      return [slug, AccountTypes.HYPEREVM_PK];
+    }
     return [slug, AccountTypes.PK];
   }),
 );
@@ -32,12 +35,10 @@ export function getNetworkConfig(slug: string, override?: HttpNetworkUserConfig)
     throw new Error(`No AccountType mapped for network '${slug}'`);
   }
 
-  const accountType = networkAccountMap[slug];
-
   // const timeout = slug === 'hedera' ? 60_000 : undefined;
 
   return {
-    accounts: getNetworkAccounts(accountType),
+    accounts: getNetworkAccounts(networkAccountMap[slug]),
     url: override?.url ?? getChainRpc(slug),
     // gas: 12_000_000,
     chainId: entry.chainId,

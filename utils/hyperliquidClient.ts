@@ -4,6 +4,26 @@ import { HttpTransport, InfoClient, ExchangeClient } from '@nktkas/hyperliquid';
 import dotenv from 'dotenv';
 dotenv.config();
 
+function ensureFetchPolyfillParity() {
+  const globalFetch = (globalThis as any)?.fetch;
+  if (!globalFetch) {
+    return;
+  }
+
+  const { Request: fetchRequest, Headers: fetchHeaders, Response: fetchResponse } = globalFetch as any;
+
+  // Hardhat under Node 20+ can mix undici globals with node-fetch's fetch implementation.
+  if (typeof fetchRequest === 'function' && fetchRequest !== (globalThis as any).Request) {
+    (globalThis as any).Request = fetchRequest;
+  }
+  if (typeof fetchHeaders === 'function' && fetchHeaders !== (globalThis as any).Headers) {
+    (globalThis as any).Headers = fetchHeaders;
+  }
+  if (typeof fetchResponse === 'function' && fetchResponse !== (globalThis as any).Response) {
+    (globalThis as any).Response = fetchResponse;
+  }
+}
+
 /**
  * Initializes connection to Hyperliquid EVM via ethers.js + SDK transport
  */
@@ -11,10 +31,12 @@ export async function initHyperliquidClients() {
   // Default Hardhat provider
   const provider = ethers.provider;
 
-  const pk = process.env.PK;
+  ensureFetchPolyfillParity();
+
+  const pk = process.env.HYPEREVM_PK;
 
   if (!pk) {
-    throw new Error(`No PK set in .env`);
+    throw new Error(`No HYPEREVM_PK set in .env`);
   }
 
   // Use private key to create signer connected to Hardhat provider

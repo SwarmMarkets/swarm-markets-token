@@ -10,6 +10,7 @@ const hostMap: Record<AccountTypes, string | undefined> = {
   [AccountTypes.PK]: process.env.PK,
   [AccountTypes.TESTNET_PK]: process.env.TESTNET_PK,
   [AccountTypes.HEDERA_PK]: process.env.HEDERA_PK,
+  [AccountTypes.HYPEREVM_PK]: process.env.HYPEREVM_PK,
 };
 
 /**

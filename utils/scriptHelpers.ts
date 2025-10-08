@@ -45,15 +45,17 @@ export async function getChainContext() {
 export async function getFeeOverrides(
   chainId: number,
   provider?: providers.Provider,
-): Promise<{ maxPriorityFeePerGas?: BigNumber; maxFeePerGas?: BigNumber } | undefined> {
+): Promise<{ maxPriorityFeePerGas?: BigNumber; maxFeePerGas?: BigNumber; gasLimit?: number }> {
   // Currently only BSC customizes gas settings in these scripts
   if (chainId === 56) {
     const feeData = await (provider ?? ethers.provider).getFeeData();
     const maxPriorityFeePerGas = feeData.maxPriorityFeePerGas || ethers.utils.parseUnits('1', 'gwei');
     const maxFeePerGas = feeData.maxFeePerGas || ethers.utils.parseUnits('20', 'gwei');
     return { maxPriorityFeePerGas, maxFeePerGas };
+  } else if (chainId === 295) {
+    return { gasLimit: 2_000_000 };
   }
-  return undefined;
+  return {};
 }
 
 export function safeGet<T, K extends keyof T>(obj: T, key: K, hint?: string) {
@@ -64,4 +66,3 @@ export function safeGet<T, K extends keyof T>(obj: T, key: K, hint?: string) {
   }
   return val as T[K];
 }
-

@@ -96,6 +96,7 @@ const config: HardhatUserConfig = {
     plume: getNetworkConfig('plume'),
     scroll: getNetworkConfig('scroll'),
     mezo: getNetworkConfig('mezo'),
+    plasma: getNetworkConfig('plasma'),
     amoy: getNetworkConfig('amoy'),
     base_sepolia: getNetworkConfig('base_sepolia'),
     arbitrum_sepolia: getNetworkConfig('arbitrum_sepolia'),

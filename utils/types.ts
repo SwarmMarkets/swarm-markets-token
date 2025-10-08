@@ -3,6 +3,7 @@ export enum AccountTypes {
   PK,
   TESTNET_PK,
   HEDERA_PK,
+  HYPEREVM_PK,
 }
 
 export interface ChainConfig {
